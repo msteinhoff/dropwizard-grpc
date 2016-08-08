@@ -22,13 +22,13 @@ public final class GrpcUtil {
         return value;
     }
 
-    static void checkGrpcArgument(final boolean test, final String description, final Object... args) {
+    public static void checkGrpcArgument(final boolean test, final String description, final Object... args) {
         if (!test) {
             throw new StatusRuntimeException(Status.INVALID_ARGUMENT.withDescription(String.format(description, args)));
         }
     }
 
-    static <V> void convertExceptions(StreamObserver<V> responseObserver, Runnable runnable) {
+    public static <V> void convertExceptions(StreamObserver<V> responseObserver, Runnable runnable) {
         try {
             runnable.run();
             responseObserver.onCompleted();
