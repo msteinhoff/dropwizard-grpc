@@ -11,7 +11,7 @@ import javax.validation.constraints.Min;
 import io.dropwizard.validation.ValidationMethod;
 import io.grpc.ServerBuilder;
 
-public final class GrpcServerFactory {
+public class GrpcServerFactory {
     @Min(1)
     @Max(65535)
     private int port = 8080;
