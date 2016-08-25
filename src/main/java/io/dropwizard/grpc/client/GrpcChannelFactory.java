@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+import io.dropwizard.setup.Environment;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -73,9 +74,12 @@ public class GrpcChannelFactory {
 
     /**
      * @return A {@link ManagedChannel} with hostname and port set from the configuration and plaintext communication
-     * enabled.
+     * enabled. The returned channel is lifecycle-managed in the given {@link Environment}.
      */
-    public ManagedChannel build() {
-        return builder().build();
+    public ManagedChannel build(final Environment environment) {
+        final ManagedChannel managedChannel;
+        managedChannel = builder().build();
+        environment.lifecycle().manage(new ManagedGrpcChannel(managedChannel));
+        return managedChannel;
     }
 }
