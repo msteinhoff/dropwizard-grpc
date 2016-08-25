@@ -2,8 +2,6 @@ package io.dropwizard.grpc.server;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,11 +20,11 @@ public final class ManagedGrpcServer implements Managed {
     private final Server server;
     private final Duration shutdownTimeout;
 
-    public ManagedGrpcServer(final Server server) throws IOException {
+    public ManagedGrpcServer(final Server server) {
         this(server, Duration.seconds(5));
     }
 
-    public ManagedGrpcServer(final Server server, final Duration shutdownTimeout) throws IOException {
+    public ManagedGrpcServer(final Server server, final Duration shutdownTimeout) {
         this.server = checkNotNull(server, "server");
         this.shutdownTimeout = checkNotNull(shutdownTimeout, "shutdownTimeout");
     }
