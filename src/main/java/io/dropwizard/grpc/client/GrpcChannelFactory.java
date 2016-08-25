@@ -26,12 +26,17 @@ import io.grpc.ManagedChannelBuilder;
  *     <tr>
  *         <td>{@code hostname}</td>
  *         <td>(none)</td>
- *         <td>gRPC server hostname to connect to.</td>
+ *         <td>Hostname of the gRPC server to connect to.</td>
  *     </tr>
  *     <tr>
  *         <td>{@code port}</td>
  *         <td>-1</td>
- *         <td>gRPC server port to connect to.</td>
+ *         <td>Port of the gRPC server to connect to.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code shutdownPeriod}</td>
+ *         <td>5 seconds</td>
+ *         <td>How long to wait before giving up when the channel is shutdown.</td>
  *     </tr>
  * </table>
  */

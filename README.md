@@ -41,12 +41,20 @@ TODO Example
 
 ## Usage
 
-TODO Description
+To embed a grpc channel for a server, add a `GrpcChannelFactory` to your [Configuration](http://dropwizard.io/1.0.0/docs/manual/core.html#configuration)
+class. This enables configuration of the grpc channel hostname and port. The `GrpcChannelFactory` class provides a
+`build()` method which automatically adds the channel instance to the dropwizard lifecycle.
+
 TODO Example
 
 ## Configuration
 
-TODO Description
+The following configuration settings are supported by `GrpcChannelFactory`:
+
+* `hostname`: Hostname of the gRPC server to connect to
+* `port`: Port of the gRPC server to connect to
+* `shutdownDuration`: How long to wait before giving up when the channel is shutdown
+
 TODO Example
 
 
