@@ -11,9 +11,8 @@ import io.grpc.Server;
 
 /**
  * Dropwizard lifecycle management for a gRPC server.
- *
- * TODO: attach name for logging purposes
  */
+// TODO attach name for logging purposes
 public final class ManagedGrpcServer implements Managed {
     private static final Logger log = LoggerFactory.getLogger(ManagedGrpcServer.class);
 
