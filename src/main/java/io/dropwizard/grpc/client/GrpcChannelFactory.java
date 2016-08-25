@@ -10,6 +10,31 @@ import javax.validation.constraints.Min;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
+/**
+ * A factory for building {@link ManagedChannel}s in dropwizard applications.
+ *
+ * <b>Configuration Parameters:</b>
+ * <table>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code hostname}</td>
+ *         <td>(none)</td>
+ *         <td>gRPC server hostname to connect to.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code port}</td>
+ *         <td>-1</td>
+ *         <td>gRPC server port to connect to.</td>
+ *     </tr>
+ * </table>
+ */
+// TODO NettyChannelBuilder with client-side TLS validation
+// TODO ClientInterceptor to collect dropwizard metrics
+// TODO ClientInterceptor to send rpc call and exception events to logback
 public class GrpcChannelFactory {
     @NotEmpty
     private String hostname;

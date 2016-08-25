@@ -11,6 +11,39 @@ import javax.validation.constraints.Min;
 import io.dropwizard.validation.ValidationMethod;
 import io.grpc.ServerBuilder;
 
+/**
+ * A factory for creating pre-configured {@link ServerBuilder} instances in dropwizard applications.
+ *
+ * The application must register gRPC services and build a gRPC server which can be lifecycle-
+ * {@link ManagedGrpcServer}.
+ *
+ * <b>Configuration Parameters:</b>
+ * <table>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code port}</td>
+ *         <td>8080</td>
+ *         <td>The port number where the gRPC server should listen on.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code certChainFile}</td>
+ *         <td>(none)</td>
+ *         <td>The certificate chain file to configure transport security in the gRPC server.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code privateKeyFile}</td>
+ *         <td>(none)</td>
+ *         <td>The private key file to configure transport security in the gRPC server.</td>
+ *     </tr>
+ * </table>
+ */
+// TODO DropwizardGrpcServerBuilder to encapsulate ServerInterceptors and ManagedGrpcServer
+// TODO configure io.grpc.ServerInterceptor to collect dropwizard metrics
+// TODO configure io.grpc.ServerInterceptor to send rpc call and exception events to logback
 public class GrpcServerFactory {
     @Min(1)
     @Max(65535)

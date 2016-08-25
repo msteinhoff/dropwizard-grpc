@@ -12,10 +12,9 @@ import io.dropwizard.util.Duration;
 import io.grpc.ManagedChannel;
 
 /**
- * Dropwizard-managed gRPC ManagedChannel.
- *
- * Yes, I know.
+ * Dropwizard lifecycle management for a gRPC channel.
  */
+// TODO attach name for logging purposes
 public final class ManagedGrpcChannel implements Managed {
     private static final Logger log = LoggerFactory.getLogger(ManagedGrpcChannel.class);
 
@@ -32,7 +31,9 @@ public final class ManagedGrpcChannel implements Managed {
     }
 
     public void start() throws Exception {
-        // no need to start the channel
+        // A gRPC channel must not be started.
+        // The underlying transport is managed transparently, e.g. opened implicitly when the first RPC call is made.
+        // A channel also provides advanced features like idle detection (+disconnect of the underlying transport).
     }
 
     public void stop() throws Exception {

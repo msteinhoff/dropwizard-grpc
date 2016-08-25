@@ -12,7 +12,9 @@ import io.dropwizard.util.Duration;
 import io.grpc.Server;
 
 /**
- * Dropwizard-managed gRPC server.
+ * Dropwizard lifecycle management for a gRPC server.
+ *
+ * TODO: attach name for logging purposes
  */
 public final class ManagedGrpcServer implements Managed {
     private static final Logger log = LoggerFactory.getLogger(ManagedGrpcServer.class);
