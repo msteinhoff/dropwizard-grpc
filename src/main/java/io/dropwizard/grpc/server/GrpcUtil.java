@@ -9,7 +9,6 @@ import io.grpc.stub.StreamObserver;
 /**
  * Collects utility methods to make grpc service implementations.
  */
-@SuppressWarnings("unused")
 public final class GrpcUtil {
     // prevent instantiation
     private GrpcUtil() {
