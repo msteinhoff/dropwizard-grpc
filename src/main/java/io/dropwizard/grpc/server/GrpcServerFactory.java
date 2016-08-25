@@ -29,7 +29,12 @@ import io.grpc.ServerBuilder;
  *     <tr>
  *         <td>{@code port}</td>
  *         <td>8080</td>
- *         <td>The port number where the gRPC server should listen on.</td>
+ *         <td>Port number the gRPC server should bind on.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code shutdownPeriod}</td>
+ *         <td>5 seconds</td>
+ *         <td>How long to wait before giving up when the server is shutdown.</td>
  *     </tr>
  *     <tr>
  *         <td>{@code certChainFile}</td>

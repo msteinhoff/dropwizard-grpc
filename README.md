@@ -30,7 +30,8 @@ TODO Example
 
 The following configuration settings are supported by `GrpcServerFactory`:
 
-* `port`: Port the server should bind to
+* `port`: Port number the gRPC server should bind on
+* `shutdownDuration`: How long to wait before giving up when the server is shutdown
 * `certChainFile`: Path to the certificate chain file when TLS should be used
 * `privateKeyFile`: Path to the private key file when TLS should be used
 
