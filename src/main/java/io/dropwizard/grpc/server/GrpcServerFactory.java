@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.ValidationMethod;
@@ -48,9 +49,6 @@ import io.grpc.ServerBuilder;
  *     </tr>
  * </table>
  */
-// TODO DropwizardGrpcServerBuilder to encapsulate ServerInterceptors and ManagedGrpcServer
-// TODO configure io.grpc.ServerInterceptor to collect dropwizard metrics
-// TODO configure io.grpc.ServerInterceptor to send rpc call and exception events to logback
 public class GrpcServerFactory {
     @Min(1)
     @Max(65535)
@@ -115,14 +113,17 @@ public class GrpcServerFactory {
 
     /**
      * @return A {@link ServerBuilder}, with port and optional transport security set from the configuration. To use
-     * this, add gRPC services to the server, call build() and then pass it to a {@link ManagedGrpcServer}.
+     * this, add gRPC services to the server, then call build(). The returned server is lifecycle-managed in the given
+     * {@link Environment}.
      */
-    public ServerBuilder<?> builder() {
-        final ServerBuilder<?> serverBuilder;
-        serverBuilder = ServerBuilder.forPort(port);
+    public ServerBuilder<?> builder(final Environment environment) {
+        final ServerBuilder<?> originBuilder;
+        final ServerBuilder<?> dropwizardBuilder;
+        originBuilder = ServerBuilder.forPort(port);
+        dropwizardBuilder = new DropwizardServerBuilder(environment, originBuilder);
         if (certChainFile != null && privateKeyFile != null) {
-            serverBuilder.useTransportSecurity(certChainFile.toFile(), privateKeyFile.toFile());
+            dropwizardBuilder.useTransportSecurity(certChainFile.toFile(), privateKeyFile.toFile());
         }
-        return serverBuilder;
+        return dropwizardBuilder;
     }
 }

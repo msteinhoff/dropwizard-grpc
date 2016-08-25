@@ -21,8 +21,8 @@ The package provides [lifecycle-management] [3] and configuration factory classe
 To embed a grpc server, add a `GrpcServerFactory` to your [Configuration](http://dropwizard.io/1.0.0/docs/manual/core.html#configuration)
 class. This enables configuration of the grpc server port and transport security files.
 
-Call `addService()` on the `ServerBuilder` to configure all rpc services, then `build()` the Server and create a
-`ManagedGrpcServer` instance in .
+Use the `GrpcServerFactory` class to create a `ServerBuilder` via `builder()`. Next, add services with `addService()`.
+Finally, `build()` the Server. It is automatically added to the dropwizard lifecycle.
 
 TODO Example
 
