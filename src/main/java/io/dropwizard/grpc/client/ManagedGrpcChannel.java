@@ -2,8 +2,6 @@ package io.dropwizard.grpc.client;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,11 +19,11 @@ public final class ManagedGrpcChannel implements Managed {
     private final ManagedChannel channel;
     private final Duration disconnectTimeout;
 
-    public ManagedGrpcChannel(final ManagedChannel channel) throws IOException {
+    public ManagedGrpcChannel(final ManagedChannel channel) {
         this(channel, Duration.seconds(5));
     }
 
-    public ManagedGrpcChannel(final ManagedChannel channel, final Duration disconnectTimeout) throws IOException {
+    public ManagedGrpcChannel(final ManagedChannel channel, final Duration disconnectTimeout) {
         this.channel = checkNotNull(channel, "channel");
         this.disconnectTimeout = checkNotNull(disconnectTimeout, "disconnectTimeout");
     }
