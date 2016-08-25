@@ -8,6 +8,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Duration;
+import io.dropwizard.validation.MinDuration;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -44,6 +46,9 @@ public class GrpcChannelFactory {
     @Max(65535)
     private int port = -1;
 
+    @MinDuration(1)
+    private Duration shutdownPeriod = Duration.seconds(5);
+
     @JsonProperty
     public String getHostname() {
         return hostname;
@@ -64,6 +69,16 @@ public class GrpcChannelFactory {
         this.port = port;
     }
 
+    @JsonProperty
+    public Duration getShutdownPeriod() {
+        return shutdownPeriod;
+    }
+
+    @JsonProperty
+    public void setShutdownPeriod(final Duration duration) {
+        this.shutdownPeriod = duration;
+    }
+
     /**
      * @return A {@link ManagedChannelBuilder}, with hostname and port set from the configuration and plaintext
      * communication enabled. The builder can be customized further, e.g. to add channel-wide interceptors.
@@ -79,7 +94,7 @@ public class GrpcChannelFactory {
     public ManagedChannel build(final Environment environment) {
         final ManagedChannel managedChannel;
         managedChannel = builder().build();
-        environment.lifecycle().manage(new ManagedGrpcChannel(managedChannel));
+        environment.lifecycle().manage(new ManagedGrpcChannel(managedChannel, shutdownPeriod));
         return managedChannel;
     }
 }
