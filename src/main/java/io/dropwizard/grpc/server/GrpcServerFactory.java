@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+import io.dropwizard.util.Duration;
+import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.ValidationMethod;
 import io.grpc.ServerBuilder;
 
@@ -49,6 +51,9 @@ public class GrpcServerFactory {
     @Max(65535)
     private int port = 8080;
 
+    @MinDuration(1)
+    private Duration shutdownPeriod = Duration.seconds(5);
+
     private Path certChainFile;
 
     private Path privateKeyFile;
@@ -61,6 +66,16 @@ public class GrpcServerFactory {
     @JsonProperty("port")
     public void setPort(final int port) {
         this.port = port;
+    }
+
+    @JsonProperty("shutdownPeriod")
+    public Duration getShutdownPeriod() {
+        return shutdownPeriod;
+    }
+
+    @JsonProperty("shutdownPeriod")
+    public void setShutdownPeriod(final Duration duration) {
+        this.shutdownPeriod = duration;
     }
 
     @JsonProperty("certChainFile")
