@@ -52,13 +52,13 @@ TODO Example
 
 # Maven Artifacts
 
-This project is available on Maven Central. To add it to your project simply add the following dependencies to your
-`pom.xml`:
+This project is not yet available on Maven Central. You have to clone it and install it in your local maven repository.
+To add it to your project simply add the following dependencies to your `pom.xml`:
 
     <dependency>
       <groupId>io.dropwizard.modules</groupId>
       <artifactId>dropwizard-grpc</artifactId>
-      <version>1.0.0-rc2-1</version>
+      <version>1.0.0-1-SNAPSHOT</version>
     </dependency>
 
 
