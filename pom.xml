@@ -7,14 +7,14 @@
         <maven>3.0.0</maven>
     </prerequisites>
 
-    <groupId>io.dropwizard.modules</groupId>
+    <groupId>io.github.msteinhoff</groupId>
     <artifactId>dropwizard-grpc</artifactId>
-    <version>1.0.0-1-SNAPSHOT</version>
+    <version>1.0.0-1</version>
     <packaging>jar</packaging>
 
     <name>Dropwizard gRPC Bundle</name>
     <description>Addon bundle for Dropwizard to support gRPC</description>
-    <url>https://github.com/msteinhoff/dropwizard-grpc</url>
+    <url>http://msteinhoff.github.io/dropwizard-grpc/</url>
 
     <licenses>
         <license>
@@ -41,13 +41,9 @@
     </issueManagement>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
         <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>bintray-msteinhoff</id>
+            <url>https://api.bintray.com/maven/msteinhoff/com.github.msteinhoff/dropwizard-grpc/;publish=1</url>
         </repository>
     </distributionManagement>
 
@@ -79,7 +75,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>io.dropwizard</groupId>
@@ -293,19 +288,6 @@
                                 <id>attach-javadocs</id>
                                 <goals>
                                     <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
                                 </goals>
                             </execution>
                         </executions>
