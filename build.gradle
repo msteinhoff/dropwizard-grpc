@@ -3,8 +3,8 @@ buildscript {
         maven {
             url 'https://oss.jfrog.org/artifactory/plugins-release'
             credentials {
-                username = "${artifactory_user}"
-                password = "${artifactory_password}"
+                username = "${System.env.ARTIFACTORY_USER}"
+                password = "${System.env.ARTIFACTORY_PASSWORD}"
             }
         }
     }
@@ -180,12 +180,12 @@ publishing {
 }
 
 artifactory {
-    contextUrl = "${artifactory_contextUrl}"
+    contextUrl = "${System.env.ARTIFACTORY_CONTEXTURL}"
     publish {
         repository {
             repoKey = 'oss-snapshot-local'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
+            username = "${System.env.ARTIFACTORY_USER}"
+            password = "${System.env.ARTIFACTORY_PASSWORD}"
             maven = true
         }
         defaults {
@@ -195,8 +195,8 @@ artifactory {
     resolve {
         repository {
             repoKey = 'libs-release'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
+            username = "${System.env.ARTIFACTORY_USER}"
+            password = "${System.env.ARTIFACTORY_PASSWORD}"
             maven = true
             
         }
@@ -207,8 +207,8 @@ artifactoryPublish.dependsOn(assemble)
 publish.dependsOn(artifactoryPublish)
 
 bintray {
-    user = "${bintray_user}"
-    key = "${bintray_apikey}"
+    user = "${System.env.BINTRAY_USER}"
+    key = "${System.env.BINTRAY_KEY}"
     publications = ['mavenJava']
     dryRun = project.hasProperty('dryRun') && project.dryRun.toBoolean()
     publish = true
@@ -234,8 +234,8 @@ bintray {
             }
             mavenCentralSync {
                 sync = true
-                user = "${ossrh_user}"
-                password = "${ossrh_password}"
+                user = "${System.env.OSSRH_USER}"
+                password = "${System.env.OSSRH_PASSWORD}"
                 close = '1'
             }
         }
