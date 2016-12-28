@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<FindBugsFilter>
+    <!-- ignore return value from delegate builder -->
+    <Match>
+        <Class name="io.dropwizard.grpc.server.DropwizardServerBuilder"/>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/>
+    </Match>
+    <Match>
+        <Class name="io.dropwizard.grpc.server.GrpcServerFactory"/>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/>
+    </Match>
+</FindBugsFilter>

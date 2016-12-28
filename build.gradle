@@ -1,0 +1,246 @@
+buildscript {
+    repositories {
+        maven {
+            url 'https://oss.jfrog.org/artifactory/plugins-release'
+            credentials {
+                username = "${artifactory_user}"
+                password = "${artifactory_password}"
+            }
+        }
+    }
+    dependencies {
+        //Check for the latest version here: http://plugins.gradle.org/plugin/com.jfrog.artifactory
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4+"
+    }
+}
+
+plugins {
+    id "java"
+    id "pmd"
+    id "findbugs"
+    id "maven-publish"
+    id "com.jfrog.artifactory" version "4.4.0"
+    id "com.jfrog.bintray" version "1.7.3"
+    id "idea"
+}
+
+ext {
+  buildDateTime = new Date()
+  (buildDateOnly, buildTimeOnly) = new java.text.SimpleDateFormat('yyyy-MM-dd HH:mm:ss.SSSZ').format(buildDateTime).split(' ')
+  gitRevision = "git rev-parse HEAD".execute().text.trim()
+  gradleVersion = '3.2.1'
+  // jar versions
+  dropwizardVersion = '1.0.0'
+  grpcVersion = '1.0.0'
+  junitVersion = '4.12'
+  mockitoVersion = '1.10.19'
+}
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+group = 'io.github.msteinhoff'
+description = 'A set of classes to use a gRPC server in a Dropwizard service.'
+version = '1.0.0-1'
+
+def forceRelease = (project.hasProperty('forceRelease') && project.forceRelease.toBoolean())
+def isSnapshotVersion = (version == 'unspecified' || version.endsWith('-SNAPSHOT'))
+def releaseMode = (forceRelease || !isSnapshotVersion) ? 'release' : 'snapshot';
+def isRelease = (releaseMode == 'release')
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "io.dropwizard:dropwizard-core:$dropwizardVersion"
+    compile "io.grpc:grpc-netty:$grpcVersion"
+    compile "io.grpc:grpc-stub:$grpcVersion"
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.mockito:mockito-all:$mockitoVersion"
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "$gradleVersion"
+    distributionUrl "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+}
+
+tasks.withType(Jar) {
+    manifest {
+        attributes(
+            'Built-By': System.properties['user.name'],
+            'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
+            'Build-Date': buildDateOnly,
+            'Build-Time': buildTimeOnly,
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version,
+            'Implementation-Vendor': "Mario Steinhoff",
+            "Implementation-Vendor-Id": "${project.group}",
+            "Git-Commit-Id": gitRevision
+        )
+    }
+}
+
+task javadocJar(type: Jar) {
+    group BasePlugin.BUILD_GROUP
+    description 'Assemble a jar archive containing the javadoc files.'
+
+    classifier 'javadoc'
+    from javadoc.destinationDir
+}
+javadocJar.enabled = isRelease
+javadocJar.dependsOn(javadoc)
+
+task sourcesJar(type: Jar) {
+    group BasePlugin.BUILD_GROUP
+    description 'Assemble a jar archive containing the source files.'
+
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+sourcesJar.enabled = isRelease
+
+pmd {
+    toolVersion = "5.5.1"
+}
+
+findbugs {
+    toolVersion = "3.0.1"
+    excludeFilter = file("${projectDir}/config/findbugs/excludeFilter.xml")
+}
+
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
+
+artifacts {
+    archives jar
+    if(isRelease) {
+        archives sourcesJar
+        archives javadocJar
+    }
+}
+
+def projectMeta = {
+    resolveStrategy = groovy.lang.Closure.DELEGATE_FIRST
+    name project.name
+    description project.description
+    url 'http://msteinhoff.github.io/dropwizard-grpc/'
+    inceptionYear '2016'
+    licenses {
+        license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            distribution 'repo'
+        }
+    }
+    ciManagement {
+        system 'Travis CI'
+        url 'https://travis-ci.org/msteinhoff/dropwizard-grpc'
+    }
+    issueManagement {
+        system 'GitHub Issues'
+        url 'https://github.com/msteinhoff/dropwizard-grpc/issues'
+    }
+    scm {
+        connection 'scm:git:https://github.com/msteinhoff/dropwizard-grpc.git'
+        developerConnection 'scm:git:git@github.com:msteinhoff/dropwizard-grpc.git'
+        url 'https://github.com/msteinhoff/dropwizard-grpc'
+    }
+    developers {
+        developer {
+            id 'm.steinhoff'
+            name 'Mario Steinhoff'
+            email 'steinhoff.mario@gmail.com'
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            if(isRelease) {
+                artifact sourcesJar
+                artifact javadocJar
+            }
+
+            pom.withXml {
+                asNode().children().last() + projectMeta
+            }
+        }
+    }
+}
+
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"
+    publish {
+        repository {
+            repoKey = 'oss-snapshot-local'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+        }
+        defaults {
+            publications ('mavenJava')
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'libs-release'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+            
+        }
+    }
+}
+artifactoryPublish.enabled = !isRelease
+artifactoryPublish.dependsOn(assemble)
+publish.dependsOn(artifactoryPublish)
+
+bintray {
+    user = "${bintray_user}"
+    key = "${bintray_apikey}"
+    publications = ['mavenJava']
+    dryRun = project.hasProperty('dryRun') && project.dryRun.toBoolean()
+    publish = true
+    override = true
+    pkg {
+        repo = 'com.github.msteinhoff'
+        name = project.name
+        desc = project.description
+        websiteUrl = 'http://msteinhoff.github.io/dropwizard-grpc/'
+        issueTrackerUrl = 'https://github.com/msteinhoff/dropwizard-grpc/issues'
+        vcsUrl = 'https://github.com/msteinhoff/dropwizard-grpc'
+        licenses = ['Apache-2.0']
+        labels = ['dropwizard', 'grpc', 'java']
+        publicDownloadNumbers = true
+        githubRepo = 'msteinhoff/dropwizard-grpc'
+        githubReleaseNotesFile = 'CHANGELOG.md'
+        version {
+            name = project.version
+            vcsTag = "v${project.version}"
+            released = "$buildDateOnly"
+            gpg {
+                sign = true
+            }
+            mavenCentralSync {
+                sync = true
+                user = "${ossrh_user}"
+                password = "${ossrh_password}"
+                close = '1'
+            }
+        }
+    }
+}
+bintrayUpload.enabled = isRelease
+bintrayUpload.dependsOn(build)
+publish.dependsOn(bintrayUpload)
