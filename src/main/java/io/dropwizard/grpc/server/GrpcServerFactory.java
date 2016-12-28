@@ -16,37 +16,37 @@ import io.grpc.ServerBuilder;
 
 /**
  * A factory for creating pre-configured {@link ServerBuilder} instances in dropwizard applications.
- *
+ * <p>
  * The application must register gRPC services and build a gRPC server which can be lifecycle-
  * {@link ManagedGrpcServer}.
- *
+ * <p>
  * <b>Configuration Parameters:</b>
- * <table>
- *     <tr>
- *         <td>Name</td>
- *         <td>Default</td>
- *         <td>Description</td>
- *     </tr>
- *     <tr>
- *         <td>{@code port}</td>
- *         <td>8080</td>
- *         <td>Port number the gRPC server should bind on.</td>
- *     </tr>
- *     <tr>
- *         <td>{@code shutdownPeriod}</td>
- *         <td>5 seconds</td>
- *         <td>How long to wait before giving up when the server is shutdown.</td>
- *     </tr>
- *     <tr>
- *         <td>{@code certChainFile}</td>
- *         <td>(none)</td>
- *         <td>The certificate chain file to configure transport security in the gRPC server.</td>
- *     </tr>
- *     <tr>
- *         <td>{@code privateKeyFile}</td>
- *         <td>(none)</td>
- *         <td>The private key file to configure transport security in the gRPC server.</td>
- *     </tr>
+ * <table summary="Configuration Parameters">
+ * <tr>
+ * <td>Name</td>
+ * <td>Default</td>
+ * <td>Description</td>
+ * </tr>
+ * <tr>
+ * <td>{@code port}</td>
+ * <td>8080</td>
+ * <td>Port number the gRPC server should bind on.</td>
+ * </tr>
+ * <tr>
+ * <td>{@code shutdownPeriod}</td>
+ * <td>5 seconds</td>
+ * <td>How long to wait before giving up when the server is shutdown.</td>
+ * </tr>
+ * <tr>
+ * <td>{@code certChainFile}</td>
+ * <td>(none)</td>
+ * <td>The certificate chain file to configure transport security in the gRPC server.</td>
+ * </tr>
+ * <tr>
+ * <td>{@code privateKeyFile}</td>
+ * <td>(none)</td>
+ * <td>The private key file to configure transport security in the gRPC server.</td>
+ * </tr>
  * </table>
  */
 public class GrpcServerFactory {
@@ -112,6 +112,7 @@ public class GrpcServerFactory {
     }
 
     /**
+     * @param environment to use
      * @return A {@link ServerBuilder}, with port and optional transport security set from the configuration. To use
      * this, add gRPC services to the server, then call build(). The returned server is lifecycle-managed in the given
      * {@link Environment}.

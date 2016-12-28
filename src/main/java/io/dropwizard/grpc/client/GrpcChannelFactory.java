@@ -15,29 +15,29 @@ import io.grpc.ManagedChannelBuilder;
 
 /**
  * A factory for building {@link ManagedChannel}s in dropwizard applications.
- *
+ * <p>
  * <b>Configuration Parameters:</b>
- * <table>
- *     <tr>
- *         <td>Name</td>
- *         <td>Default</td>
- *         <td>Description</td>
- *     </tr>
- *     <tr>
- *         <td>{@code hostname}</td>
- *         <td>(none)</td>
- *         <td>Hostname of the gRPC server to connect to.</td>
- *     </tr>
- *     <tr>
- *         <td>{@code port}</td>
- *         <td>-1</td>
- *         <td>Port of the gRPC server to connect to.</td>
- *     </tr>
- *     <tr>
- *         <td>{@code shutdownPeriod}</td>
- *         <td>5 seconds</td>
- *         <td>How long to wait before giving up when the channel is shutdown.</td>
- *     </tr>
+ * <table summary="Configuration Parameters">
+ * <tr>
+ * <td>Name</td>
+ * <td>Default</td>
+ * <td>Description</td>
+ * </tr>
+ * <tr>
+ * <td>{@code hostname}</td>
+ * <td>(none)</td>
+ * <td>Hostname of the gRPC server to connect to.</td>
+ * </tr>
+ * <tr>
+ * <td>{@code port}</td>
+ * <td>-1</td>
+ * <td>Port of the gRPC server to connect to.</td>
+ * </tr>
+ * <tr>
+ * <td>{@code shutdownPeriod}</td>
+ * <td>5 seconds</td>
+ * <td>How long to wait before giving up when the channel is shutdown.</td>
+ * </tr>
  * </table>
  */
 // TODO NettyChannelBuilder with client-side TLS validation
@@ -93,6 +93,7 @@ public class GrpcChannelFactory {
     }
 
     /**
+     * @param environment to use
      * @return A {@link ManagedChannel} with hostname and port set from the configuration and plaintext communication
      * enabled. The returned channel is lifecycle-managed in the given {@link Environment}.
      */
