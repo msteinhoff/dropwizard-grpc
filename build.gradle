@@ -263,5 +263,5 @@ bintray {
     }
 }
 bintrayUpload.enabled = isRelease
-bintrayUpload.dependsOn(build)
+bintrayUpload.dependsOn(assemble)
 publish.dependsOn(bintrayUpload)
