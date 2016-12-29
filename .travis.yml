@@ -18,7 +18,7 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 after_success:
-  - bash travis/code-coverage.sh
-  - bash travis/publish.sh
+  - ./gradlew jacocoTestReport coveralls
+  - ./gradlew publish
 jdk:
   - oraclejdk8
