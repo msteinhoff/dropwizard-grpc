@@ -1,6 +1,17 @@
 sudo: false
 language: java
+env:
+  global:
+    - ARTIFACTORY_USER=msteinhoff
+    #- ARTIFACTORY_PASSWORD=
+    - ARTIFACTORY_CONTEXTURL=https://oss.jfrog.org/artifactory
+    - BINTRAY_USER=msteinhoff
+    #- BINTRAY_KEY=
+    - OSSRH_USER=Xchange
+    #- OSSRH_PASSWORD=
+    #- COVERALLS_REPO_KEY=
 after_success:
-  - bash .travis_after_success.sh
+  - bash travis/code-coverage.sh
+  - bash travis/publish.sh
 jdk:
   - oraclejdk8

@@ -5,4 +5,4 @@ if [[ "${TRAVIS_JDK_VERSION}" != "oraclejdk8" ]]; then
     exit
 fi
 
-mvn -B jacoco:report coveralls:report
+./gradlew publish
