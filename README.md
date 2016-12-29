@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/msteinhoff/dropwizard-grpc.svg?branch=master)](https://travis-ci.org/msteinhoff/dropwizard-grpc)
 [![Coverage Status](https://img.shields.io/coveralls/msteinhoff/dropwizard-grpc.svg)](https://coveralls.io/r/msteinhoff/dropwizard-grpc)
-[![Maven Central](https://img.shields.io/maven-central/v/io.dropwizard.modules/dropwizard-grpc.svg)](http://mvnrepository.com/artifact/io.dropwizard.modules/dropwizard-grpc)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.msteinhoff/dropwizard-grpc.svg)](http://mvnrepository.com/artifact/io.github.msteinhoff/dropwizard-grpc)
 
 A set of classes to use [gRPC] [1] server in a [Dropwizard] [2] application.  
 
