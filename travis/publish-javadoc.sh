@@ -11,7 +11,7 @@ if [ "$TRAVIS_REPO_SLUG" == "$REPO_SLUG" ] && [ "$TRAVIS_JDK_VERSION" == "oracle
   cd $HOME
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "travis-ci"
-  git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/$REPO_SLUG gh-pages > /dev/null
+  git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/$REPO_SLUG.git gh-pages > /dev/null
 
   cd gh-pages
   git rm -rf ./javadoc
