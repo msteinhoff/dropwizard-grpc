@@ -135,6 +135,10 @@ jacocoTestReport {
 }
 check.dependsOn(jacocoTestReport)
 
+tasks.coveralls {
+    onlyIf { System.env.'CI' }
+}
+
 artifacts {
     archives jar
     if(isRelease) {
