@@ -253,7 +253,7 @@ bintray {
                 sign = true
             }
             mavenCentralSync {
-                sync = true
+                sync = false
                 user = "${System.env.OSSRH_USER}"
                 password = "${System.env.OSSRH_PASSWORD}"
                 close = '1'
