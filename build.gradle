@@ -88,6 +88,10 @@ tasks.withType(Jar) {
     }
 }
 
+javadoc {
+    options.noTimestamp = true
+}
+
 task javadocJar(type: Jar) {
     group BasePlugin.BUILD_GROUP
     description 'Assemble a jar archive containing the javadoc files.'
