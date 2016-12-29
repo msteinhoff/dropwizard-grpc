@@ -2,10 +2,12 @@
 
 REPO_SLUG=msteinhoff/dropwizard-grpc
 
-if [ -d "build/docs/javadoc" ] && [ "$TRAVIS_REPO_SLUG" == "$REPO_SLUG" ] && [ "$TRAVIS_JDK_VERSION" == "oraclejdk8" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
+if [ "$TRAVIS_REPO_SLUG" == "$REPO_SLUG" ] && [ "$TRAVIS_JDK_VERSION" == "oraclejdk8" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
+  
+  echo -e "Building javadoc...\n"
+  ./gradlew javadoc
 
   echo -e "Publishing javadoc...\n"
-
   cp -R build/docs/javadoc $HOME/javadoc-latest
 
   cd $HOME
