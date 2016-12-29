@@ -10,6 +10,13 @@ env:
     - OSSRH_USER=Xchange
     #- OSSRH_PASSWORD=
     #- COVERALLS_REPO_KEY=
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
 after_success:
   - bash travis/code-coverage.sh
   - bash travis/publish.sh
