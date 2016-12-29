@@ -235,7 +235,7 @@ bintray {
     dryRun = project.hasProperty('dryRun') && project.dryRun.toBoolean()
     publish = true
     pkg {
-        repo = 'com.github.msteinhoff'
+        repo = 'maven'
         name = project.name
         desc = project.description
         websiteUrl = 'http://msteinhoff.github.io/dropwizard-grpc/'
