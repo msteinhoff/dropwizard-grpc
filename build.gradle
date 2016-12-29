@@ -18,6 +18,8 @@ plugins {
     id "java"
     id "pmd"
     id "findbugs"
+    id "jacoco"
+    id 'com.github.kt3k.coveralls' version '2.6.3'
     id "maven-publish"
     id "com.jfrog.artifactory" version "4.4.0"
     id "com.jfrog.bintray" version "1.7.3"
@@ -118,6 +120,20 @@ tasks.withType(FindBugs) {
         html.enabled = true
     }
 }
+
+jacoco {
+    toolVersion = "0.7.6.201602180812"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        csv.enabled = false
+        html.enabled = true
+        html.destination = "${buildDir}/reports/jacoco"
+    }
+}
+check.dependsOn(jacocoTestReport)
 
 artifacts {
     archives jar
