@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 buildscript {
     repositories {
         maven {
@@ -248,7 +250,7 @@ bintray {
         version {
             name = project.version
             vcsTag = "v${project.version}"
-            released = "$buildDateOnly"
+            released = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZ", Locale.ENGLISH).format(new Date())
             gpg {
                 sign = true
             }
