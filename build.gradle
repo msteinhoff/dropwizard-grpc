@@ -42,7 +42,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 group = 'io.github.msteinhoff'
 description = 'A set of classes to use a gRPC server in a Dropwizard service.'
-version = '1.0.0-1'
+version = '1.0.0-2-SNAPSHOT'
 
 def forceRelease = (project.hasProperty('forceRelease') && project.forceRelease.toBoolean())
 def isSnapshotVersion = (version == 'unspecified' || version.endsWith('-SNAPSHOT'))
