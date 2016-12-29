@@ -64,16 +64,22 @@ shutdown
 
     TODO Example
 
-# Maven Artifacts
+# Artifacts
 
-This project is available in [jCenter](https://bintray.com/bintray/jcenter)
-with the following dependencies:  
+This project is available on JCenter and Maven Central.  To add it to your
+project simply add the following dependency to your pom.xml:
 
     <dependency>
       <groupId>io.github.msteinhoff</groupId>
       <artifactId>dropwizard-grpc</artifactId>
       <version>1.0.0-1</version>
     </dependency>
+
+Or if you are using gradle:
+
+    dependencies {
+        compile 'io.github.msteinhoff:dropwizard-grpc:1.0.0-1'
+    }
 
 # Support
 
