@@ -93,7 +93,7 @@ hostname and port.
 class ExampleServiceConfiguration extends Configuration {
     @Valid
     @NotNull
-    private GrpcChannelFactory monitoringService = new GrpcChannelFactory();
+    private GrpcChannelFactory externalService = new GrpcChannelFactory();
 
     @JsonProperty("externalService")
     public GrpcChannelFactory getExternalGrpcChannelFactory() {
