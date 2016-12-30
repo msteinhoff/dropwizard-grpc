@@ -11,27 +11,31 @@ The package provides [lifecycle-management] [3] and configuration factory
 classes with the most common options for gRPC `Server` and `ManagedChannel`
 classes.  
 
-[1]: http://www.grpc.io/
-[2]: http://dropwizard.io/1.0.0/docs
-[3]: http://dropwizard.io/1.0.0/docs/manual/core.html#managed-objects
-
 # Server
 
-## Server Usage
-
-To embed a grpc server, add a `GrpcServerFactory` to your [Configuration] [3]
+To embed a grpc server, add a `GrpcServerFactory` to your [Configuration] [4]
 class.  This enables configuration of the grpc server port and transport
 security files.  
 
-Use the `GrpcServerFactory` class to create a `ServerBuilder` via `builder()`.  
-Next, add services with `addService()`.  Finally, `build()` the Server. It is
-automatically added to the dropwizard lifecycle.  
+**ExampleServiceConfiguration.java**:  
 
-    TODO Example
+```java
+    class ExampleServiceConfiguration extends Configuration {
+        @Valid
+        @NotNull
+        private GrpcServerFactory grpcServer = new GrpcServerFactory();
 
-[3]: http://dropwizard.io/1.0.0/docs/manual/core.html#configuration
+        @JsonProperty("grpcServer")
+        public GrpcServerFactory getGrpcServerFactory() {
+            return grpcServer;
+        }
 
-## Server Configuration
+        @JsonProperty("grpcServer")
+        public void setGrpcServerFactory(final GrpcServerFactory grpcServer) {
+            this.grpcServer = grpcServer;
+        }
+    }
+```
 
 The following configuration settings are supported by `GrpcServerFactory`:  
 
@@ -40,20 +44,69 @@ The following configuration settings are supported by `GrpcServerFactory`:
 * `certChainFile`: Path to the certificate chain file when TLS should be used
 * `privateKeyFile`: Path to the private key file when TLS should be used
 
-    TODO Example
+**example-service.yml:**
+
+```yaml
+    server:
+        [...]
+    logging:
+        [...]
+    grpcServer:
+      port: 80000
+      shutdownDuration: 10 seconds
+```
+
+In dropwizard's run method, use the `GrpcServerFactory` class to create a gRPC
+`Server` instance.  The `GrpcServerFactory` provides a `ServerBuilder` via
+`builder()` to configure the Server instance, e.g. to add a custom executor or
+to add gRPC service classes.  The created server instance is also automatically
+added to the dropwizard lifecycle.  
+
+**ExampleServiceApplication.java**:  
+
+```java
+    class ExampleServiceApplication extends Application<ExampleServiceConfiguration> {
+    [...]
+
+        @Override
+        public void run(final ClientServerConfiguration configuration, final Environment environment) throws IOException {
+            final Server grpcServer;
+            grpcServer = configuration.getGrpcServerFactory()
+                    .builder(environment)
+                    .addService(new ExampleService())
+                    .build();
+        }
+
+    [...]
+  }
+```
 
 # Client
 
-## Client Usage
-
 To embed a grpc channel for a server, add a `GrpcChannelFactory` to your
-[Configuration] [3] class.  This enables configuration of the grpc channel
-hostname and port.  The `GrpcChannelFactory` class provides a `build()` method 
-which automatically adds the channel instance to the dropwizard lifecycle.  
+[Configuration] [4] class.  This enables configuration of the grpc channel
+hostname and port.
 
-    TODO Example
+**ExampleServiceConfiguration.java**:  
 
-## Client Configuration
+```java
+    class ExampleServiceConfiguration extends Configuration {
+        @Valid
+        @NotNull
+        private GrpcChannelFactory monitoringService = new GrpcChannelFactory();
+
+        @JsonProperty("externalService")
+        public GrpcChannelFactory getExternalGrpcChannelFactory() {
+            return externalService;
+        }
+
+        @JsonProperty("externalService")
+        public void setExternalGrpcChannelFactory(final GrpcChannelFactory externalService) {
+            this.externalService = externalService;
+        }   
+
+    }
+```
 
 The following configuration settings are supported by `GrpcChannelFactory`:
 
@@ -62,7 +115,42 @@ The following configuration settings are supported by `GrpcChannelFactory`:
 * `shutdownDuration`: How long to wait before giving up when the channel is
 shutdown
 
-    TODO Example
+**example-service.yml:**
+
+```yaml
+    server:
+        [...]
+    logging:
+        [...]
+    externalService:
+      hostname: hostname.example.org
+      port: 8000
+      shutdownDuration: 10 seconds
+```
+
+In dropwizard's run method, use the `GrpcChannelFactory` class to create a gRPC
+`ManagedChannel` instance.   The created channel instance is also automatically
+added to the dropwizard lifecycle.  The returned `ManagedChannel` instance can
+be used by other application components to send requests to the given server.  
+
+**ExampleServiceApplication.java**:  
+
+```java
+    class ExampleServiceApplication extends Application<ExampleServiceConfiguration> {
+    [...]
+
+        @Override
+        public void run(final ClientServerConfiguration configuration, final Environment environment) throws IOException {
+            final ManagedChannel externalServiceChannel;
+            externalServiceChannel = configuration.getExternalGrpcChannelFactory()
+                    .build(environment);
+
+            // use externalServiceChannel
+        }
+
+    [...]
+  }
+```
 
 # Artifacts
 
@@ -83,15 +171,19 @@ Or if you are using gradle:
 
 # Support
 
-Please file bug reports and feature requests in [GitHub issues] [4].  
-
-[4]: https://github.com/msteinhoff/dropwizard-grpc/issues
+Please file bug reports and feature requests in [GitHub issues] [5].  
 
 # License
 
-Copyright (c) 2013-2016 Mario Steinhoff
+Copyright (c) 2016 Mario Steinhoff
 
 This library is licensed under the Apache License, Version 2.0.
 
 See http://www.apache.org/licenses/LICENSE-2.0.html or the LICENSE file in this
 repository for the full license text.  
+
+[1]: http://www.grpc.io/
+[2]: http://dropwizard.io/1.0.0/docs
+[3]: http://dropwizard.io/1.0.0/docs/manual/core.html#managed-objects
+[4]: http://dropwizard.io/1.0.0/docs/manual/core.html#configuration
+[5]: https://github.com/msteinhoff/dropwizard-grpc/issues
