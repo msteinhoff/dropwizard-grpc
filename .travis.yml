@@ -1,3 +1,6 @@
+branches:
+  except:
+    - /^release\/(.*)/
 sudo: false
 language: java
 env:
