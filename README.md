@@ -20,40 +20,40 @@ security files.
 **ExampleServiceConfiguration.java**:  
 
 ```java
-    class ExampleServiceConfiguration extends Configuration {
-        @Valid
-        @NotNull
-        private GrpcServerFactory grpcServer = new GrpcServerFactory();
+class ExampleServiceConfiguration extends Configuration {
+    @Valid
+    @NotNull
+    private GrpcServerFactory grpcServer = new GrpcServerFactory();
 
-        @JsonProperty("grpcServer")
-        public GrpcServerFactory getGrpcServerFactory() {
-            return grpcServer;
-        }
-
-        @JsonProperty("grpcServer")
-        public void setGrpcServerFactory(final GrpcServerFactory grpcServer) {
-            this.grpcServer = grpcServer;
-        }
+    @JsonProperty("grpcServer")
+    public GrpcServerFactory getGrpcServerFactory() {
+        return grpcServer;
     }
+
+    @JsonProperty("grpcServer")
+    public void setGrpcServerFactory(final GrpcServerFactory grpcServer) {
+        this.grpcServer = grpcServer;
+    }
+}
 ```
 
 The following configuration settings are supported by `GrpcServerFactory`:  
 
 * `port`: Port number the gRPC server should bind on
 * `shutdownDuration`: How long to wait before giving up when the server is shutdown
-* `certChainFile`: Path to the certificate chain file when TLS should be used
-* `privateKeyFile`: Path to the private key file when TLS should be used
+* `certChainFile`: (Optional) Path to the certificate chain file when TLS should be used
+* `privateKeyFile`: (Optional) Path to the private key file when TLS should be used
 
 **example-service.yml:**
 
 ```yaml
-    server:
-        [...]
-    logging:
-        [...]
-    grpcServer:
-      port: 80000
-      shutdownDuration: 10 seconds
+server:
+    [...]
+logging:
+    [...]
+grpcServer:
+    port: 80000
+    shutdownDuration: 10 seconds
 ```
 
 In dropwizard's run method, use the `GrpcServerFactory` class to create a gRPC
@@ -65,20 +65,20 @@ added to the dropwizard lifecycle.
 **ExampleServiceApplication.java**:  
 
 ```java
-    class ExampleServiceApplication extends Application<ExampleServiceConfiguration> {
+class ExampleServiceApplication extends Application<ExampleServiceConfiguration> {
     [...]
 
-        @Override
-        public void run(final ClientServerConfiguration configuration, final Environment environment) throws IOException {
-            final Server grpcServer;
-            grpcServer = configuration.getGrpcServerFactory()
-                    .builder(environment)
-                    .addService(new ExampleService())
-                    .build();
-        }
+    @Override
+    public void run(final ClientServerConfiguration configuration, final Environment environment) throws IOException {
+        final Server grpcServer;
+        grpcServer = configuration.getGrpcServerFactory()
+                .builder(environment)
+                .addService(new ExampleService())
+                .build();
+    }
 
     [...]
-  }
+}
 ```
 
 # Client
@@ -90,22 +90,22 @@ hostname and port.
 **ExampleServiceConfiguration.java**:  
 
 ```java
-    class ExampleServiceConfiguration extends Configuration {
-        @Valid
-        @NotNull
-        private GrpcChannelFactory monitoringService = new GrpcChannelFactory();
+class ExampleServiceConfiguration extends Configuration {
+    @Valid
+    @NotNull
+    private GrpcChannelFactory monitoringService = new GrpcChannelFactory();
 
-        @JsonProperty("externalService")
-        public GrpcChannelFactory getExternalGrpcChannelFactory() {
-            return externalService;
-        }
-
-        @JsonProperty("externalService")
-        public void setExternalGrpcChannelFactory(final GrpcChannelFactory externalService) {
-            this.externalService = externalService;
-        }   
-
+    @JsonProperty("externalService")
+    public GrpcChannelFactory getExternalGrpcChannelFactory() {
+        return externalService;
     }
+
+    @JsonProperty("externalService")
+    public void setExternalGrpcChannelFactory(final GrpcChannelFactory externalService) {
+        this.externalService = externalService;
+    }   
+
+}
 ```
 
 The following configuration settings are supported by `GrpcChannelFactory`:
@@ -118,14 +118,14 @@ shutdown
 **example-service.yml:**
 
 ```yaml
-    server:
-        [...]
-    logging:
-        [...]
-    externalService:
-      hostname: hostname.example.org
-      port: 8000
-      shutdownDuration: 10 seconds
+server:
+    [...]
+logging:
+    [...]
+externalService:
+    hostname: hostname.example.org
+    port: 8000
+    shutdownDuration: 10 seconds
 ```
 
 In dropwizard's run method, use the `GrpcChannelFactory` class to create a gRPC
@@ -136,20 +136,20 @@ be used by other application components to send requests to the given server.
 **ExampleServiceApplication.java**:  
 
 ```java
-    class ExampleServiceApplication extends Application<ExampleServiceConfiguration> {
+class ExampleServiceApplication extends Application<ExampleServiceConfiguration> {
     [...]
 
-        @Override
-        public void run(final ClientServerConfiguration configuration, final Environment environment) throws IOException {
-            final ManagedChannel externalServiceChannel;
-            externalServiceChannel = configuration.getExternalGrpcChannelFactory()
-                    .build(environment);
+    @Override
+    public void run(final ClientServerConfiguration configuration, final Environment environment) throws IOException {
+        final ManagedChannel externalServiceChannel;
+        externalServiceChannel = configuration.getExternalGrpcChannelFactory()
+                .build(environment);
 
-            // use externalServiceChannel
-        }
+        // use externalServiceChannel
+    }
 
     [...]
-  }
+}
 ```
 
 # Artifacts
