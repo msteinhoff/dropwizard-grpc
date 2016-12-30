@@ -69,7 +69,7 @@ class ExampleServiceApplication extends Application<ExampleServiceConfiguration>
     [...]
 
     @Override
-    public void run(final ClientServerConfiguration configuration, final Environment environment) throws IOException {
+    public void run(final ExampleServiceConfiguration configuration, final Environment environment) throws IOException {
         final Server grpcServer;
         grpcServer = configuration.getGrpcServerFactory()
                 .builder(environment)
@@ -140,7 +140,7 @@ class ExampleServiceApplication extends Application<ExampleServiceConfiguration>
     [...]
 
     @Override
-    public void run(final ClientServerConfiguration configuration, final Environment environment) throws IOException {
+    public void run(final ExampleServiceConfiguration configuration, final Environment environment) throws IOException {
         final ManagedChannel externalServiceChannel;
         externalServiceChannel = configuration.getExternalGrpcChannelFactory()
                 .build(environment);
