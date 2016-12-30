@@ -16,6 +16,7 @@ echo -e "Building javadoc...\n"
 ./gradlew javadoc
 
 echo -e "Publishing README and CHANGELOG...\n"
+cp _config.yml $HOME/ghp-staging
 cp README.md $HOME/ghp-staging
 cp CHANGELOG.md $HOME/ghp-staging
 
