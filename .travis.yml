@@ -20,6 +20,6 @@ cache:
 after_success:
   - ./gradlew jacocoTestReport coveralls
   - ./gradlew publish
-  - ./travis/publish-javadoc.sh
+  - ./travis/publish-website.sh
 jdk:
   - oraclejdk8
