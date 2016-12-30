@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GrpcServerFactory.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">dropwizard-grpc</a> &gt; <a href="index.source.html" class="el_package">io.dropwizard.grpc.server</a> &gt; <span class="el_source">GrpcServerFactory.java</span></div><h1>GrpcServerFactory.java</h1><pre class="source lang-java linenums">package io.dropwizard.grpc.server;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
+import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Duration;
+import io.dropwizard.validation.MinDuration;
+import io.dropwizard.validation.ValidationMethod;
+import io.grpc.ServerBuilder;
+
+/**
+ * A factory for creating pre-configured {@link ServerBuilder} instances in dropwizard applications.
+ * &lt;p&gt;
+ * The application must register gRPC services and build a gRPC server which can be lifecycle-
+ * {@link ManagedGrpcServer}.
+ * &lt;p&gt;
+ * &lt;b&gt;Configuration Parameters:&lt;/b&gt;
+ * &lt;table summary=&quot;Configuration Parameters&quot;&gt;
+ * &lt;tr&gt;
+ * &lt;td&gt;Name&lt;/td&gt;
+ * &lt;td&gt;Default&lt;/td&gt;
+ * &lt;td&gt;Description&lt;/td&gt;
+ * &lt;/tr&gt;
+ * &lt;tr&gt;
+ * &lt;td&gt;{@code port}&lt;/td&gt;
+ * &lt;td&gt;8080&lt;/td&gt;
+ * &lt;td&gt;Port number the gRPC server should bind on.&lt;/td&gt;
+ * &lt;/tr&gt;
+ * &lt;tr&gt;
+ * &lt;td&gt;{@code shutdownPeriod}&lt;/td&gt;
+ * &lt;td&gt;5 seconds&lt;/td&gt;
+ * &lt;td&gt;How long to wait before giving up when the server is shutdown.&lt;/td&gt;
+ * &lt;/tr&gt;
+ * &lt;tr&gt;
+ * &lt;td&gt;{@code certChainFile}&lt;/td&gt;
+ * &lt;td&gt;(none)&lt;/td&gt;
+ * &lt;td&gt;The certificate chain file to configure transport security in the gRPC server.&lt;/td&gt;
+ * &lt;/tr&gt;
+ * &lt;tr&gt;
+ * &lt;td&gt;{@code privateKeyFile}&lt;/td&gt;
+ * &lt;td&gt;(none)&lt;/td&gt;
+ * &lt;td&gt;The private key file to configure transport security in the gRPC server.&lt;/td&gt;
+ * &lt;/tr&gt;
+ * &lt;/table&gt;
+ */
+<span class="nc" id="L52">public class GrpcServerFactory {</span>
+<span class="nc" id="L53">    @Min(1)</span>
+    @Max(65535)
+    private int port = 8080;
+
+<span class="nc" id="L57">    @MinDuration(1)</span>
+<span class="nc" id="L58">    private Duration shutdownPeriod = Duration.seconds(5);</span>
+
+    private Path certChainFile;
+
+    private Path privateKeyFile;
+
+    @JsonProperty(&quot;port&quot;)
+    public int getPort() {
+<span class="nc" id="L66">        return port;</span>
+    }
+
+    @JsonProperty(&quot;port&quot;)
+    public void setPort(final int port) {
+<span class="nc" id="L71">        this.port = port;</span>
+<span class="nc" id="L72">    }</span>
+
+    @JsonProperty(&quot;shutdownPeriod&quot;)
+    public Duration getShutdownPeriod() {
+<span class="nc" id="L76">        return shutdownPeriod;</span>
+    }
+
+    @JsonProperty(&quot;shutdownPeriod&quot;)
+    public void setShutdownPeriod(final Duration duration) {
+<span class="nc" id="L81">        this.shutdownPeriod = duration;</span>
+<span class="nc" id="L82">    }</span>
+
+    @JsonProperty(&quot;certChainFile&quot;)
+    public Path getCertChainFile() {
+<span class="nc" id="L86">        return certChainFile;</span>
+    }
+
+    @JsonProperty(&quot;certChainFile&quot;)
+    public void setCertChainFile(final Path certChainFile) {
+<span class="nc" id="L91">        this.certChainFile = certChainFile;</span>
+<span class="nc" id="L92">    }</span>
+
+    @JsonProperty(&quot;privateKeyFile&quot;)
+    public Path getPrivateKeyFile() {
+<span class="nc" id="L96">        return privateKeyFile;</span>
+    }
+
+    @JsonProperty(&quot;privateKeyFile&quot;)
+    public void setPrivateKeyFile(final Path privateKeyFile) {
+<span class="nc" id="L101">        this.privateKeyFile = privateKeyFile;</span>
+<span class="nc" id="L102">    }</span>
+
+    @ValidationMethod(message = &quot;cert chain file {value} does not exist&quot;)
+    public boolean isValidCertChainFile() {
+<span class="nc bnc" id="L106" title="All 4 branches missed.">        return certChainFile == null || Files.exists(certChainFile);</span>
+    }
+
+    @ValidationMethod(message = &quot;private key file {value} does not exist&quot;)
+    public boolean isValidPrivateKeyFile() {
+<span class="nc bnc" id="L111" title="All 4 branches missed.">        return privateKeyFile == null || Files.exists(privateKeyFile);</span>
+    }
+
+    /**
+     * @param environment to use
+     * @return A {@link ServerBuilder}, with port and optional transport security set from the configuration. To use
+     * this, add gRPC services to the server, then call build(). The returned server is lifecycle-managed in the given
+     * {@link Environment}.
+     */
+    public ServerBuilder&lt;?&gt; builder(final Environment environment) {
+        final ServerBuilder&lt;?&gt; originBuilder;
+        final ServerBuilder&lt;?&gt; dropwizardBuilder;
+<span class="nc" id="L123">        originBuilder = ServerBuilder.forPort(port);</span>
+<span class="nc" id="L124">        dropwizardBuilder = new DropwizardServerBuilder(environment, originBuilder);</span>
+<span class="nc bnc" id="L125" title="All 4 branches missed.">        if (certChainFile != null &amp;&amp; privateKeyFile != null) {</span>
+<span class="nc" id="L126">            dropwizardBuilder.useTransportSecurity(certChainFile.toFile(), privateKeyFile.toFile());</span>
+        }
+<span class="nc" id="L128">        return dropwizardBuilder;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

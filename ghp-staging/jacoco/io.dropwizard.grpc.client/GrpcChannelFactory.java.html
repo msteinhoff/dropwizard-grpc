@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GrpcChannelFactory.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">dropwizard-grpc</a> &gt; <a href="index.source.html" class="el_package">io.dropwizard.grpc.client</a> &gt; <span class="el_source">GrpcChannelFactory.java</span></div><h1>GrpcChannelFactory.java</h1><pre class="source lang-java linenums">package io.dropwizard.grpc.client;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
+import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Duration;
+import io.dropwizard.validation.MinDuration;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+
+/**
+ * A factory for building {@link ManagedChannel}s in dropwizard applications.
+ * &lt;p&gt;
+ * &lt;b&gt;Configuration Parameters:&lt;/b&gt;
+ * &lt;table summary=&quot;Configuration Parameters&quot;&gt;
+ * &lt;tr&gt;
+ * &lt;td&gt;Name&lt;/td&gt;
+ * &lt;td&gt;Default&lt;/td&gt;
+ * &lt;td&gt;Description&lt;/td&gt;
+ * &lt;/tr&gt;
+ * &lt;tr&gt;
+ * &lt;td&gt;{@code hostname}&lt;/td&gt;
+ * &lt;td&gt;(none)&lt;/td&gt;
+ * &lt;td&gt;Hostname of the gRPC server to connect to.&lt;/td&gt;
+ * &lt;/tr&gt;
+ * &lt;tr&gt;
+ * &lt;td&gt;{@code port}&lt;/td&gt;
+ * &lt;td&gt;-1&lt;/td&gt;
+ * &lt;td&gt;Port of the gRPC server to connect to.&lt;/td&gt;
+ * &lt;/tr&gt;
+ * &lt;tr&gt;
+ * &lt;td&gt;{@code shutdownPeriod}&lt;/td&gt;
+ * &lt;td&gt;5 seconds&lt;/td&gt;
+ * &lt;td&gt;How long to wait before giving up when the channel is shutdown.&lt;/td&gt;
+ * &lt;/tr&gt;
+ * &lt;/table&gt;
+ */
+// TODO NettyChannelBuilder with client-side TLS validation
+// TODO ClientInterceptor to collect dropwizard metrics
+// TODO ClientInterceptor to send rpc call and exception events to logback
+<span class="nc" id="L46">public class GrpcChannelFactory {</span>
+    @NotEmpty
+    private String hostname;
+
+<span class="nc" id="L50">    @Min(1)</span>
+    @Max(65535)
+    private int port = -1;
+
+<span class="nc" id="L54">    @MinDuration(1)</span>
+<span class="nc" id="L55">    private Duration shutdownPeriod = Duration.seconds(5);</span>
+
+    @JsonProperty
+    public String getHostname() {
+<span class="nc" id="L59">        return hostname;</span>
+    }
+
+    @JsonProperty
+    public void setHostname(final String hostname) {
+<span class="nc" id="L64">        this.hostname = hostname;</span>
+<span class="nc" id="L65">    }</span>
+
+    @JsonProperty
+    public int getPort() {
+<span class="nc" id="L69">        return port;</span>
+    }
+
+    @JsonProperty
+    public void setPort(final int port) {
+<span class="nc" id="L74">        this.port = port;</span>
+<span class="nc" id="L75">    }</span>
+
+    @JsonProperty
+    public Duration getShutdownPeriod() {
+<span class="nc" id="L79">        return shutdownPeriod;</span>
+    }
+
+    @JsonProperty
+    public void setShutdownPeriod(final Duration duration) {
+<span class="nc" id="L84">        this.shutdownPeriod = duration;</span>
+<span class="nc" id="L85">    }</span>
+
+    /**
+     * @return A {@link ManagedChannelBuilder}, with hostname and port set from the configuration and plaintext
+     * communication enabled. The builder can be customized further, e.g. to add channel-wide interceptors.
+     */
+    public ManagedChannelBuilder builder() {
+<span class="nc" id="L92">        return ManagedChannelBuilder.forAddress(getHostname(), getPort()).usePlaintext(true);</span>
+    }
+
+    /**
+     * @param environment to use
+     * @return A {@link ManagedChannel} with hostname and port set from the configuration and plaintext communication
+     * enabled. The returned channel is lifecycle-managed in the given {@link Environment}.
+     */
+    public ManagedChannel build(final Environment environment) {
+        final ManagedChannel managedChannel;
+<span class="nc" id="L102">        managedChannel = builder().build();</span>
+<span class="nc" id="L103">        environment.lifecycle().manage(new ManagedGrpcChannel(managedChannel, shutdownPeriod));</span>
+<span class="nc" id="L104">        return managedChannel;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>
