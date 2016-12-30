@@ -36,7 +36,7 @@ git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/$REPO_SLUG.gi
 echo -e "Updating gh-pages branch...\n"
 cd ghp-repo
 git rm -rf ./*
-cp -Rf $HOME/ghp-staging .
+cp -Rf $HOME/ghp-staging/* .
 git add -f .
 git commit -m "Latest page content on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
 git push -fq origin gh-pages > /dev/null
