@@ -3,15 +3,6 @@ branches:
     - /^release\/(.*)/
 sudo: false
 language: java
-env:
-  global:
-    #- ARTIFACTORY_USER=
-    #- ARTIFACTORY_PASSWORD=
-    #- ARTIFACTORY_CONTEXTURL=
-    #- BINTRAY_USER=msteinhoff
-    #- BINTRAY_KEY=
-    #- OSSRH_USER=
-    #- OSSRH_PASSWORD=
 before_install:
   - ./travis/configure-gradle.sh
 before_cache:
