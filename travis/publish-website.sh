@@ -25,16 +25,13 @@ cp CHANGELOG.md $STAGING_DIRECTORY
 if [ "$SNAPSHOT" = "false" ];
 then
     RELEASE_VERSION="$DROPWIZARD_VERSION-$PROJECT_VERSION"
-    echo -e "Building javadoc...\n"
-    ./gradlew javadoc
 
-    echo -e "Staging findbugs, pmd, junit, jacodo reports and javadoc...\n"
+    echo -e "Staging findbugs, pmd, junit, jacodo reports...\n"
     mkdir -p $STAGING_DIRECTORY/$RELEASE_VERSION
     cp -R build/reports/findbugs $STAGING_DIRECTORY/$RELEASE_VERSION/findbugs
     cp -R build/reports/pmd $STAGING_DIRECTORY/$RELEASE_VERSION/pmd
     cp -R build/reports/tests/test $STAGING_DIRECTORY/$RELEASE_VERSION/tests
     cp -R build/reports/jacoco $STAGING_DIRECTORY/$RELEASE_VERSION/jacoco
-    cp -R build/docs/javadoc $STAGING_DIRECTORY/$RELEASE_VERSION/javadoc
 fi
 
 echo -e "Cloning gh-pages branch...\n"
