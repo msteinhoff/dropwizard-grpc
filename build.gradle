@@ -91,14 +91,14 @@ tasks.withType(JavaCompile) {
 tasks.withType(Jar) {
     manifest {
         attributes(
-            'Built-By': System.properties['user.name'],
-            'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
-            'Build-Date': buildDateOnly,
-            'Build-Time': buildTimeOnly,
             'Implementation-Title': project.name,
             'Implementation-Version': project.version,
             'Implementation-Vendor': "Mario Steinhoff",
-            "Implementation-Vendor-Id": "${project.group}",
+            "Implementation-Vendor-Id": project.group,
+            'Created-By': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})".toString(),
+            'Built-By': System.properties['user.name'],
+            'Build-Date': buildDateOnly,
+            'Build-Time': buildTimeOnly,
             "Git-Commit-Id": gitRevision
         )
     }
