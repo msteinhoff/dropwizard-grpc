@@ -5,14 +5,13 @@ sudo: false
 language: java
 env:
   global:
-    - ARTIFACTORY_USER=msteinhoff
+    #- ARTIFACTORY_USER=
     #- ARTIFACTORY_PASSWORD=
-    - ARTIFACTORY_CONTEXTURL=https://oss.jfrog.org/artifactory
-    - BINTRAY_USER=msteinhoff
+    #- ARTIFACTORY_CONTEXTURL=
+    #- BINTRAY_USER=msteinhoff
     #- BINTRAY_KEY=
-    - OSSRH_USER=Xchange
+    #- OSSRH_USER=
     #- OSSRH_PASSWORD=
-    #- COVERALLS_REPO_KEY=
 before_script:
   - ./travis/configure-gradle.sh
 before_cache:
