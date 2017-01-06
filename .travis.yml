@@ -12,7 +12,7 @@ env:
     #- BINTRAY_KEY=
     #- OSSRH_USER=
     #- OSSRH_PASSWORD=
-before_script:
+before_install:
   - ./travis/configure-gradle.sh
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
