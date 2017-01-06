@@ -16,10 +16,7 @@ cache:
     - $HOME/.gradle/wrapper/
 after_success:
   - ./gradlew jacocoTestReport coveralls
-deploy:
-  provider: script
-  script: travis/deploy.sh
-  on:
-    branch: master
+  - ./gradlew publish
+  - ./travis/publish-website.sh
 jdk:
   - oraclejdk8
