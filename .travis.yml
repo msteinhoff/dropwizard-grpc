@@ -13,6 +13,8 @@ env:
     - OSSRH_USER=Xchange
     #- OSSRH_PASSWORD=
     #- COVERALLS_REPO_KEY=
+before_script:
+  - ./travis/configure-gradle.sh
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
