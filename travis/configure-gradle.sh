@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ev
 GRADLE_PROPERTIES="$HOME/.gradle/gradle.properties"
 echo "Gradle Properties should exist at $GRADLE_PROPERTIES"
 

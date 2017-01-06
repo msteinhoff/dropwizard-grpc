@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ev
 STAGING_DIRECTORY=$HOME/ghp-staging
 REPO_SLUG=msteinhoff/dropwizard-grpc
 BRANCH=master
