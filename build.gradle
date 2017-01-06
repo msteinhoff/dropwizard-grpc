@@ -40,20 +40,16 @@ ext {
   mockitoVersion = '1.10.19'
 }
 
-def versionPropsFile = file('version.properties')
+def versionFileContent = new File('version.properties').text
 def versionDropwizardVersion
 def versionProjectVersion
 def versionIsSnapshot
 
-if (versionPropsFile.canRead()) {
-    def Properties versionProps = new Properties()
-    versionProps.load(new FileInputStream(versionPropsFile))
-    versionDropwizardVersion = versionProps['DROPWIZARD_VERSION']
-    versionProjectVersion = versionProps['PROJECT_VERSION'].toInteger()
-    versionIsSnapshot = versionProps['SNAPSHOT'].toBoolean()
-} else {
-    throw new GradleException("Could not read version.properties!")
-}
+def Properties versionProps = new Properties()
+versionProps.load(new StringReader(versionFileContent))
+versionDropwizardVersion = versionProps['DROPWIZARD_VERSION']
+versionProjectVersion = versionProps['PROJECT_VERSION'].toInteger()
+versionIsSnapshot = versionProps['SNAPSHOT'].toBoolean()
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
