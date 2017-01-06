@@ -46,12 +46,12 @@ git clone --quiet --branch=gh-pages https://$GH_TOKEN@github.com/$REPO_SLUG.git 
 echo -e "Updating gh-pages branch...\n"
 cd ghp-repo
 git rm -f ./*
-cp -f $STAGING_DIRECTORY/* .
+cp -fv $STAGING_DIRECTORY/* .
 
 if [ "$SNAPSHOT" = "false" ];
 then
     mkdir $RELEASE_VERSION/
-    cp -Rf $STAGING_DIRECTORY/$RELEASE_VERSION/* $RELEASE_VERSION/
+    cp -Rfv $STAGING_DIRECTORY/$RELEASE_VERSION/* $RELEASE_VERSION/
 fi
 
 git add -A -f .
