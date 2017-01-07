@@ -166,6 +166,10 @@ project simply add the following dependency to your pom.xml:
 
 Or if you are using gradle:
 
+    repositories {
+        jcenter()
+    }
+
     dependencies {
         compile 'io.github.msteinhoff:dropwizard-grpc:1.0.0-1'
     }
