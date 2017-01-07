@@ -107,6 +107,10 @@ tasks.withType(FindBugs) {
     }
 }
 
+test {
+    maxParallelForks = 4
+}
+
 jacoco {
     toolVersion = "0.7.6.201602180812"
 }
