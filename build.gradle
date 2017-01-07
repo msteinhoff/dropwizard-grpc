@@ -71,11 +71,6 @@ dependencies {
     testCompile "org.mockito:mockito-all:$mockitoVersion"
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = "$gradleVersion"
-    distributionUrl "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
-}
-
 tasks.withType(JavaCompile) {
     options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
 }
@@ -95,29 +90,6 @@ tasks.withType(Jar) {
         )
     }
 }
-
-javadoc {
-    options.noTimestamp = true
-}
-
-task javadocJar(type: Jar) {
-    group BasePlugin.BUILD_GROUP
-    description 'Assemble a jar archive containing the javadoc files.'
-
-    classifier 'javadoc'
-    from javadoc.destinationDir
-}
-javadocJar.enabled = isRelease
-javadocJar.dependsOn(javadoc)
-
-task sourcesJar(type: Jar) {
-    group BasePlugin.BUILD_GROUP
-    description 'Assemble a jar archive containing the source files.'
-
-    classifier 'sources'
-    from sourceSets.main.allSource
-}
-sourcesJar.enabled = isRelease
 
 pmd {
     toolVersion = "5.5.1"
@@ -139,19 +111,32 @@ jacoco {
     toolVersion = "0.7.6.201602180812"
 }
 
-jacocoTestReport {
-    reports {
-        xml.enabled = true
-        csv.enabled = false
-        html.enabled = true
-        html.destination = "${buildDir}/reports/jacoco"
-    }
-}
-check.dependsOn(jacocoTestReport)
-
 tasks.coveralls {
     onlyIf { System.env.'CI' }
 }
+
+javadoc {
+    options.noTimestamp = true
+}
+
+task javadocJar(type: Jar) {
+    group BasePlugin.BUILD_GROUP
+    description 'Assemble a jar archive containing the javadoc files.'
+    dependsOn javadoc
+
+    classifier 'javadoc'
+    from javadoc.destinationDir
+}
+javadocJar.enabled = isRelease
+
+task sourcesJar(type: Jar) {
+    group BasePlugin.BUILD_GROUP
+    description 'Assemble a jar archive containing the source files.'
+
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+sourcesJar.enabled = isRelease
 
 artifacts {
     archives jar
@@ -277,3 +262,8 @@ bintray {
 bintrayUpload.enabled = isRelease
 bintrayUpload.dependsOn(assemble)
 publish.dependsOn(bintrayUpload)
+
+task wrapper(type: Wrapper) {
+    gradleVersion = gradleVersion
+    distributionUrl "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
+}
