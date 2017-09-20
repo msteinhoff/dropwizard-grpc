@@ -70,9 +70,9 @@ dependencies {
     compile "io.dropwizard:dropwizard-core:$dropwizardVersion"
     compile "io.grpc:grpc-netty:$grpcVersion"
     compile "io.grpc:grpc-stub:$grpcVersion"
-    compile "io.grpc:grpc-protobuf:$grpcVersion"
-    compile "com.google.protobuf:protobuf-java:$protoVersion"
     testCompile "io.dropwizard:dropwizard-testing:$dropwizardVersion"
+    testCompile "io.grpc:grpc-protobuf:$grpcVersion"
+    testCompile "com.google.protobuf:protobuf-java:$protoVersion"
     testCompile "io.grpc:grpc-testing:$grpcVersion"
     testCompile 'io.netty:netty-tcnative-boringssl-static:2.0.5.Final'
     testCompile "junit:junit:$junitVersion"
