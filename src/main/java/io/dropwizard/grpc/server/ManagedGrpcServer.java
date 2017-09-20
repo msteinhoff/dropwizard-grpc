@@ -28,15 +28,26 @@ public final class ManagedGrpcServer implements Managed {
         this.shutdownTimeout = checkNotNull(shutdownTimeout, "shutdownTimeout");
     }
 
+    @Override
     public void start() throws Exception {
         log.info("Starting gRPC server");
         server.start();
         log.info("gRPC server started on port {}", server.getPort());
     }
 
+    @Override
     public void stop() throws Exception {
         log.info("Stopping gRPC server on port {}", server.getPort());
-        server.shutdown().awaitTermination(shutdownTimeout.getQuantity(), shutdownTimeout.getUnit());
-        log.info("gRPC server stopped");
+
+        final boolean terminatedCleanly =
+                server.shutdown().awaitTermination(shutdownTimeout.getQuantity(), shutdownTimeout.getUnit());
+
+        if (terminatedCleanly) {
+            log.info("gRPC server stopped and terminated cleanly.");
+        } else {
+            log.info("gRPC server did not terminate cleanly after " + shutdownTimeout);
+            log.info("Shutting down gRPC server forcefully.");
+            server.shutdownNow();
+        }
     }
 }

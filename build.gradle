@@ -11,10 +11,12 @@ buildscript {
     dependencies {
         //Check for the latest version here: http://plugins.gradle.org/plugin/com.jfrog.artifactory
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4+"
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.2'
     }
 }
 
 plugins {
+    id "com.google.protobuf" version "0.8.2"
     id "java"
     id "pmd"
     id "findbugs"
@@ -24,10 +26,11 @@ plugins {
     id "com.jfrog.artifactory" version "4.4.0"
     id "com.jfrog.bintray" version "1.7.3"
     id "idea"
+    id "eclipse"
 }
 
 def versionProps = new Properties()
-versionProps.load(new StringReader(new File('version.properties').text))
+versionProps.load(new StringReader(new File(project.projectDir.absolutePath + '/version.properties').text))
 def versionDropwizardVersion = versionProps['DROPWIZARD_VERSION']
 def versionProjectVersion = versionProps['PROJECT_VERSION'].toInteger()
 def versionIsSnapshot = versionProps['SNAPSHOT'].toBoolean()
@@ -52,7 +55,9 @@ ext {
     gradleVersion = '3.2.1'
     // jar versions
     dropwizardVersion = versionDropwizardVersion
-    grpcVersion = '1.0.0'
+    grpcVersion = '1.6.1'
+    protocVersion = '3.3.0'
+    protoVersion = '3.3.1'
     junitVersion = '4.12'
     mockitoVersion = '1.10.19'
 }
@@ -65,8 +70,11 @@ dependencies {
     compile "io.dropwizard:dropwizard-core:$dropwizardVersion"
     compile "io.grpc:grpc-netty:$grpcVersion"
     compile "io.grpc:grpc-stub:$grpcVersion"
+    compile "io.grpc:grpc-protobuf:$grpcVersion"
+    compile "com.google.protobuf:protobuf-java:$protoVersion"
     testCompile "io.dropwizard:dropwizard-testing:$dropwizardVersion"
     testCompile "io.grpc:grpc-testing:$grpcVersion"
+    testCompile 'io.netty:netty-tcnative-boringssl-static:2.0.5.Final'
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-all:$mockitoVersion"
 }
@@ -109,6 +117,7 @@ tasks.withType(FindBugs) {
 
 test {
     maxParallelForks = 4
+    
 }
 
 jacoco {
@@ -270,4 +279,29 @@ publish.dependsOn(bintrayUpload)
 task wrapper(type: Wrapper) {
     gradleVersion = gradleVersion
     distributionUrl "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
+}
+
+protobuf {
+  // Configure the protoc executable
+  protoc {
+    // Download from repositories
+    artifact = "com.google.protobuf:protoc:$protocVersion"
+  }
+  
+  plugins {
+    // Define a plugin with name 'grpc'
+    grpc {
+      artifact = "io.grpc:protoc-gen-grpc-java:$grpcVersion"
+    }
+  }
+  
+  generateProtoTasks {
+    ofSourceSet('test')*.plugins {
+      // Apply the "grpc" plugin whose spec is defined above, without
+      // options.  Note the braces cannot be omitted, otherwise the
+      // plugin will not be added. This is because of the implicit way
+      // NamedDomainObjectContainer binds the methods.
+      grpc { }
+    }
+  }
 }

@@ -8,34 +8,44 @@ import java.util.concurrent.Executor;
 import javax.annotation.Nullable;
 
 import io.dropwizard.setup.Environment;
-import io.grpc.*;
+import io.dropwizard.util.Duration;
+import io.grpc.BindableService;
+import io.grpc.CompressorRegistry;
+import io.grpc.DecompressorRegistry;
+import io.grpc.HandlerRegistry;
+import io.grpc.Server;
+import io.grpc.ServerBuilder;
+import io.grpc.ServerServiceDefinition;
 
 /**
  * {@link ServerBuilder} decorator which adds the resulting {@link Server} instance to the environment' lifecycle.
  */
-public final class DropwizardServerBuilder extends ServerBuilder {
+public final class DropwizardServerBuilder extends ServerBuilder<DropwizardServerBuilder> {
     private final Environment environment;
-    private final ServerBuilder origin;
+    private final ServerBuilder<?> origin;
+    private final Duration shutdownPeriod;
 
-    public DropwizardServerBuilder(final Environment environment, final ServerBuilder origin) {
+    public DropwizardServerBuilder(final Environment environment, final ServerBuilder<?> origin,
+            final Duration shutdownPeriod) {
         this.environment = checkNotNull(environment, "Environment is null");
         this.origin = checkNotNull(origin, "ServerBuilder is null");
+        this.shutdownPeriod = checkNotNull(shutdownPeriod, "shutdownPeriod is null");
     }
 
     @Override
-    public ServerBuilder directExecutor() {
+    public DropwizardServerBuilder directExecutor() {
         origin.directExecutor();
         return this;
     }
 
     @Override
-    public ServerBuilder executor(@Nullable final Executor executor) {
+    public DropwizardServerBuilder executor(@Nullable final Executor executor) {
         origin.executor(executor);
         return this;
     }
 
     @Override
-    public ServerBuilder addService(final ServerServiceDefinition service) {
+    public DropwizardServerBuilder addService(final ServerServiceDefinition service) {
         // TODO configure io.grpc.ServerInterceptor to collect dropwizard metrics
         // TODO configure io.grpc.ServerInterceptor to send rpc call and exception events to logback
         origin.addService(service);
@@ -43,7 +53,7 @@ public final class DropwizardServerBuilder extends ServerBuilder {
     }
 
     @Override
-    public ServerBuilder addService(final BindableService bindableService) {
+    public DropwizardServerBuilder addService(final BindableService bindableService) {
         // TODO configure io.grpc.ServerInterceptor to collect dropwizard metrics
         // TODO configure io.grpc.ServerInterceptor to send rpc call and exception events to logback
         origin.addService(bindableService);
@@ -51,25 +61,25 @@ public final class DropwizardServerBuilder extends ServerBuilder {
     }
 
     @Override
-    public ServerBuilder fallbackHandlerRegistry(@Nullable final HandlerRegistry fallbackRegistry) {
+    public DropwizardServerBuilder fallbackHandlerRegistry(@Nullable final HandlerRegistry fallbackRegistry) {
         origin.fallbackHandlerRegistry(fallbackRegistry);
         return this;
     }
 
     @Override
-    public ServerBuilder useTransportSecurity(final File certChain, final File privateKey) {
+    public DropwizardServerBuilder useTransportSecurity(final File certChain, final File privateKey) {
         origin.useTransportSecurity(certChain, privateKey);
         return this;
     }
 
     @Override
-    public ServerBuilder decompressorRegistry(@Nullable final DecompressorRegistry registry) {
+    public DropwizardServerBuilder decompressorRegistry(@Nullable final DecompressorRegistry registry) {
         origin.decompressorRegistry(registry);
         return this;
     }
 
     @Override
-    public ServerBuilder compressorRegistry(@Nullable final CompressorRegistry registry) {
+    public DropwizardServerBuilder compressorRegistry(@Nullable final CompressorRegistry registry) {
         origin.compressorRegistry(registry);
         return this;
     }
@@ -78,7 +88,7 @@ public final class DropwizardServerBuilder extends ServerBuilder {
     public Server build() {
         final Server server;
         server = origin.build();
-        environment.lifecycle().manage(new ManagedGrpcServer(server));
+        environment.lifecycle().manage(new ManagedGrpcServer(server, shutdownPeriod));
         return server;
     }
 }

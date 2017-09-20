@@ -3,10 +3,10 @@ package io.dropwizard.grpc.server;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
@@ -48,9 +48,35 @@ import io.grpc.ServerBuilder;
  * <td>The private key file to configure transport security in the gRPC server.</td>
  * </tr>
  * </table>
+ *
+ * <p>
+ * Usage:
+ * <p>
+ * Configuration:
+ *
+ * <pre>
+ * &#64;Valid
+ * &#64;JsonProperty("grpcServer")
+ * private GrpcServerFactory grpcServerFactory;
+ *
+ * public GrpcServerFactory getGrpcServerFactory() {
+ *     return grpcServerFactory;
+ * }
+ * </pre>
+ *
+ * Application:
+ *
+ * <pre>
+ * &#64;Override
+ * public void run(&#47;* your config class *&#47; configuration, final Environment environment) throws Exception {
+ *     ...
+ *     configuration.getGrpcServerFactory().builder(environment).addService(&#47;* your code here *&#47;).build();
+ *     ...
+ * }
+ * </pre>
  */
 public class GrpcServerFactory {
-    @Min(1)
+    @Min(0)
     @Max(65535)
     private int port = 8080;
 
@@ -114,14 +140,14 @@ public class GrpcServerFactory {
     /**
      * @param environment to use
      * @return A {@link ServerBuilder}, with port and optional transport security set from the configuration. To use
-     * this, add gRPC services to the server, then call build(). The returned server is lifecycle-managed in the given
-     * {@link Environment}.
+     *         this, add gRPC services to the server, then call build(). The returned server is lifecycle-managed in the
+     *         given {@link Environment}.
      */
     public ServerBuilder<?> builder(final Environment environment) {
         final ServerBuilder<?> originBuilder;
         final ServerBuilder<?> dropwizardBuilder;
         originBuilder = ServerBuilder.forPort(port);
-        dropwizardBuilder = new DropwizardServerBuilder(environment, originBuilder);
+        dropwizardBuilder = new DropwizardServerBuilder(environment, originBuilder, shutdownPeriod);
         if (certChainFile != null && privateKeyFile != null) {
             dropwizardBuilder.useTransportSecurity(certChainFile.toFile(), privateKeyFile.toFile());
         }

@@ -1,0 +1,68 @@
+syntax = "proto3";
+package io.github.msteinhoff.dropwizard.grpc.test;
+
+option java_multiple_files = false;
+option java_package = "io.github.msteinhoff.dropwizard.grpc.test";
+option java_outer_classname = "PersonServiceApi";
+
+// Provides API to query persons (roughly based on io.dropwizard.testing.app.PersonResource)
+service PersonService {
+    // Get first person based on name
+    rpc GetPerson(GetPersonRequest) returns (GetPersonResponse);
+
+    // Get people by name
+    rpc GetPersonList(GetPersonListRequest) returns (GetPersonListResponse);
+
+    // Get 1 person by name and index
+    rpc GetPersonWithIndex(GetPersonWithIndexRequest) returns (GetPersonWithIndexResponse);
+
+    // Always throws an INTERNAL error
+    rpc Exceptional(ExceptionalRequest) returns (ExceptionalResponse);
+}
+
+// Business object encapsulating a person
+message Person {
+    string name = 2;
+    string email = 3;
+}
+
+// Request message for `GetPerson`
+message GetPersonRequest {
+    string name = 1;
+}
+
+// Response message for `GetPerson`
+message GetPersonResponse {
+    Person person = 1;
+}
+
+// Request message for `GetPersonList`
+message GetPersonListRequest {
+    string name = 1;
+}
+
+// Response message for `GetPersonList`
+message GetPersonListResponse {
+    repeated Person person = 1;
+}
+
+// Request message for `GetPersonWithIndex`
+message GetPersonWithIndexRequest {
+    int32 index = 1;
+    string name = 2;
+}
+
+// Response message for `GetPersonWithIndex`
+message GetPersonWithIndexResponse {
+    Person person = 1;
+}
+
+// Request message for `Exceptional`
+message ExceptionalRequest {
+    string name = 1;
+}
+
+// Response message for `Exceptional`
+message ExceptionalResponse {
+    Person person = 1;
+}
