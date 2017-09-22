@@ -1,4 +1,4 @@
-package io.dropwizard.grpc.server.testing;
+package io.dropwizard.grpc.server.testing.junit;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -10,8 +10,6 @@ import io.dropwizard.configuration.ConfigurationSourceProvider;
 /**
  * A {@link ConfigurationSourceProvider} implementation that cheekily returns an <code>InputStream</code> on the
  * <code>string</code> passed in its {@link #open(String)} method.
- *
- * @author gfecher
  */
 public class StringConfigurationSourceProvider implements ConfigurationSourceProvider {
     @Override

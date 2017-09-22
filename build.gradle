@@ -66,6 +66,15 @@ repositories {
     jcenter()
 }
 
+sourceSets {
+    test {
+        java {
+            srcDirs += new File(buildDir, 'generated/source/proto/test/java')
+            srcDirs += new File(buildDir, 'generated/source/proto/test/grpc')
+        }
+    }
+}
+
 dependencies {
     compile "io.dropwizard:dropwizard-core:$dropwizardVersion"
     compile "io.grpc:grpc-netty:$grpcVersion"
@@ -77,6 +86,31 @@ dependencies {
     testCompile 'io.netty:netty-tcnative-boringssl-static:2.0.5.Final'
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-all:$mockitoVersion"
+}
+
+protobuf {
+    // Configure the protoc executable
+    protoc {
+        // Download from repositories
+        artifact = "com.google.protobuf:protoc:$protocVersion"
+    }
+
+    plugins {
+        // Define a plugin with name 'grpc'
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:$grpcVersion"
+        }
+    }
+
+    generateProtoTasks {
+        ofSourceSet('test')*.plugins {
+            // Apply the "grpc" plugin whose spec is defined above, without
+            // options.  Note the braces cannot be omitted, otherwise the
+            // plugin will not be added. This is because of the implicit way
+            // NamedDomainObjectContainer binds the methods.
+            grpc { }
+        }
+    }
 }
 
 tasks.withType(JavaCompile) {
@@ -117,7 +151,6 @@ tasks.withType(FindBugs) {
 
 test {
     maxParallelForks = 4
-    
 }
 
 jacoco {
@@ -230,7 +263,6 @@ artifactory {
             username = artifactoryUser
             password = artifactoryPassword
             maven = true
-            
         }
     }
 }
@@ -281,27 +313,24 @@ task wrapper(type: Wrapper) {
     distributionUrl "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
 }
 
-protobuf {
-  // Configure the protoc executable
-  protoc {
-    // Download from repositories
-    artifact = "com.google.protobuf:protoc:$protocVersion"
-  }
-  
-  plugins {
-    // Define a plugin with name 'grpc'
-    grpc {
-      artifact = "io.grpc:protoc-gen-grpc-java:$grpcVersion"
+idea {
+    module {
+        // Marks the already(!) added srcDir as "generated"
+        generatedSourceDirs += new File(buildDir, 'generated/source/proto/test/java')
+        generatedSourceDirs += new File(buildDir, 'generated/source/proto/test/grpc')
     }
-  }
-  
-  generateProtoTasks {
-    ofSourceSet('test')*.plugins {
-      // Apply the "grpc" plugin whose spec is defined above, without
-      // options.  Note the braces cannot be omitted, otherwise the
-      // plugin will not be added. This is because of the implicit way
-      // NamedDomainObjectContainer binds the methods.
-      grpc { }
+}
+
+eclipse {
+    classpath {
+        file.beforeMerged {
+            // this will make Eclipse pick them up as source directories
+            mkdir(new File(buildDir, 'generated/source/proto/test/java'))
+            mkdir(new File(buildDir, 'generated/source/proto/test/grpc'))
+        }
     }
-  }
+
+    project {
+        natures.add('org.eclipse.buildship.core.gradleprojectnature')
+    }
 }

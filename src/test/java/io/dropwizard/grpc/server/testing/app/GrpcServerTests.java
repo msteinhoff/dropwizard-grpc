@@ -1,11 +1,12 @@
-package io.dropwizard.grpc.server;
+package io.dropwizard.grpc.server.testing.app;
 
-import static io.dropwizard.grpc.server.PersonServiceGrpcImpl.TEST_PERSON_NAME;
-import static io.dropwizard.grpc.server.testing.Utils.createClientChannelForEncryptedServer;
-import static io.dropwizard.grpc.server.testing.Utils.createPlaintextChannel;
-import static io.dropwizard.grpc.server.testing.Utils.getURIForResource;
-import static io.dropwizard.grpc.server.testing.Utils.runTestWithConfig;
-import static io.dropwizard.grpc.server.testing.Utils.shutdownChannel;
+import static io.dropwizard.grpc.server.testing.junit.Utils.add;
+import static io.dropwizard.grpc.server.testing.junit.Utils.assertEqualsWithTolerance;
+import static io.dropwizard.grpc.server.testing.junit.Utils.createClientChannelForEncryptedServer;
+import static io.dropwizard.grpc.server.testing.junit.Utils.createPlaintextChannel;
+import static io.dropwizard.grpc.server.testing.junit.Utils.getURIForResource;
+import static io.dropwizard.grpc.server.testing.junit.Utils.runCheckCommandUsingConfig;
+import static io.dropwizard.grpc.server.testing.junit.Utils.shutdownChannel;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -23,25 +24,26 @@ import com.google.common.base.Stopwatch;
 
 import io.dropwizard.grpc.server.testing.junit.TestApplication;
 import io.dropwizard.grpc.server.testing.junit.TestConfiguration;
+import io.dropwizard.grpc.testing.PersonServiceApi.GetPersonRequest;
+import io.dropwizard.grpc.testing.PersonServiceApi.GetPersonResponse;
+import io.dropwizard.grpc.testing.PersonServiceGrpc;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
-import io.github.msteinhoff.dropwizard.grpc.test.PersonServiceApi.GetPersonRequest;
-import io.github.msteinhoff.dropwizard.grpc.test.PersonServiceApi.GetPersonResponse;
-import io.github.msteinhoff.dropwizard.grpc.test.PersonServiceGrpc;
+import io.dropwizard.util.Duration;
 import io.grpc.ManagedChannel;
 import io.grpc.Status.Code;
 import io.grpc.StatusRuntimeException;
 
 /**
  * Unit tests for the <code>io.dropwizard.grpc.server</code> package.
- *
- * @author gfecher
  */
 public final class GrpcServerTests {
     /**
-     * Tolerance in milliseconds for accepting measured values against expected values.
+     * Tolerance for accepting measured values against expected values.
      */
-    private static final long DELTA_IN_MILLIS = 200L;
+    private static final Duration DELTA = Duration.milliseconds(200L);
+
+    private static final String TEST_PERSON_NAME = "blah";
 
     @Test(expected = io.dropwizard.configuration.ConfigurationValidationException.class)
     public void validationFailsWhenPortLessThanZero() throws Exception {
@@ -51,7 +53,7 @@ public final class GrpcServerTests {
                 "  shutdownPeriod: 10 seconds\n";
         // @formatter:on
 
-        runTestWithConfig(invalidPortYamlConfig);
+        runCheckCommandUsingConfig(invalidPortYamlConfig);
     }
 
     @Test(expected = io.dropwizard.configuration.ConfigurationValidationException.class)
@@ -62,7 +64,7 @@ public final class GrpcServerTests {
                 "  shutdownPeriod: 10 seconds\n";
         // @formatter:on
 
-        runTestWithConfig(invalidPortYamlConfig);
+        runCheckCommandUsingConfig(invalidPortYamlConfig);
     }
 
     @Test
@@ -109,58 +111,54 @@ public final class GrpcServerTests {
 
     @Test
     public void shouldCompleteRequestIfShutdownPeriodLongerThanLongRunningRequest() throws Exception {
-        final long shutdownPeriodInMillis = 3000L;
-        final long slowRequestDurationInMillis = 1000L;
+        final Duration shutdownPeriod = Duration.milliseconds(3000L);
+        final Duration slowRequestDuration = Duration.milliseconds(1000L);
 
-        testShutdownPeriodHonoured(shutdownPeriodInMillis, slowRequestDurationInMillis,
-            (requestDurationInMillisFut, shutdownDurationInMillisFut) -> {
-                try {
-                    final long requestDurationInMillis = requestDurationInMillisFut
-                        .get(slowRequestDurationInMillis + DELTA_IN_MILLIS, TimeUnit.SECONDS);
-                    assertEquals((double) requestDurationInMillis, slowRequestDurationInMillis, DELTA_IN_MILLIS);
-                } catch (final Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
+        testShutdownPeriodHonoured(shutdownPeriod, slowRequestDuration, (requestDurationFut, shutdownDurationFut) -> {
+            try {
+                final Duration requestDuration =
+                        requestDurationFut.get(add(slowRequestDuration, DELTA).toMilliseconds(), TimeUnit.MILLISECONDS);
+                assertEqualsWithTolerance(requestDuration, slowRequestDuration, DELTA);
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Test
-    public void shouldNotCompleteRequestIfShutdownPeriodShorterThanLongRunningRequest() throws Exception {
-        final long shutdownPeriodInMillis = 1000L;
-        final long slowRequestDurationInMillis = 3000L;
+    public void shouldHonourShutdownPeriodIfShutdownPeriodShorterThanLongRunningRequest() throws Exception {
+        final Duration shutdownPeriod = Duration.milliseconds(1000L);
+        final Duration slowRequestDuration = Duration.milliseconds(3000L);
 
-        testShutdownPeriodHonoured(shutdownPeriodInMillis, slowRequestDurationInMillis,
-            (requestDurationInMillisFut, shutdownDurationInMillisFut) -> {
-                try {
-                    final long shutdownDurationInMillis =
-                            shutdownDurationInMillisFut.get(shutdownPeriodInMillis + DELTA_IN_MILLIS, TimeUnit.SECONDS);
-
-                    assertEquals((double) shutdownPeriodInMillis, shutdownDurationInMillis, DELTA_IN_MILLIS);
-                } catch (final Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
+        testShutdownPeriodHonoured(shutdownPeriod, slowRequestDuration, (requestDurationFut, shutdownDurationFut) -> {
+            try {
+                final Duration shutdownDuration =
+                        shutdownDurationFut.get(add(shutdownPeriod, DELTA).toMilliseconds(), TimeUnit.MILLISECONDS);
+                assertEqualsWithTolerance(shutdownPeriod, shutdownDuration, DELTA);
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Test
-    public void shouldThrowWhenShutdownTimeoutIsExceeded() throws Exception {
-        final long shutdownPeriodInMillis = 1000L;
-        final long slowRequestDurationInMillis = 3000L;
+    public void shouldCancelRequestWhenShutdownTimeoutIsExceeded() throws Exception {
+        final Duration shutdownPeriod = Duration.milliseconds(1000L);
+        final Duration slowRequestDuration = Duration.milliseconds(3000L);
 
-        testShutdownPeriodHonoured(shutdownPeriodInMillis, slowRequestDurationInMillis,
-            (requestDurationInMillisFut, shutdownDurationInMillisFut) -> {
+        testShutdownPeriodHonoured(shutdownPeriod, slowRequestDuration, (requestDurationFut, shutdownDurationFut) -> {
+            try {
                 try {
-                    try {
-                        requestDurationInMillisFut.get(shutdownPeriodInMillis + DELTA_IN_MILLIS, TimeUnit.SECONDS);
-                        fail("Request should have thrown an exception");
-                    } catch (final ExecutionException e) {
-                        assertEquals(StatusRuntimeException.class, e.getCause().getClass());
-                        assertEquals(Code.CANCELLED, ((StatusRuntimeException) e.getCause()).getStatus().getCode());
-                    }
-                } catch (final Exception e) {
-                    throw new RuntimeException(e);
+                    requestDurationFut.get(add(shutdownPeriod, DELTA).toMilliseconds(), TimeUnit.MILLISECONDS);
+                    fail("Request should have thrown an exception");
+                } catch (final ExecutionException e) {
+                    assertEquals(StatusRuntimeException.class, e.getCause().getClass());
+                    assertEquals(Code.CANCELLED, ((StatusRuntimeException) e.getCause()).getStatus().getCode());
                 }
-            });
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Test
@@ -194,16 +192,16 @@ public final class GrpcServerTests {
      * Concurrently sends a long-running request and shuts down the server, then executes the assertions. It guarantees
      * that the shutdown is requested while the server is processing the long-running request.
      *
-     * @param shutdownPeriodInMillis the time the gRPC server is supposed to wait for shutdown
-     * @param slowRequestDurationInMillis the minimum time the long-running request takes
+     * @param shutdownPeriod the time the gRPC server is supposed to wait for shutdown
+     * @param slowRequestDuration the minimum time the long-running request takes
      */
-    private void testShutdownPeriodHonoured(final long shutdownPeriodInMillis, final long slowRequestDurationInMillis,
-            final BiConsumer<CompletableFuture<Long>, CompletableFuture<Long>> assertions) throws Exception {
+    private void testShutdownPeriodHonoured(final Duration shutdownPeriod, final Duration slowRequestDuration,
+            final BiConsumer<CompletableFuture<Duration>, CompletableFuture<Duration>> assertions) throws Exception {
 
         // override shutdownPeriod
-        final DropwizardTestSupport<TestConfiguration> testSupport = new DropwizardTestSupport<>(TestApplication.class,
-            resourceFilePath("grpc-test-config.yaml"), Optional.empty(),
-            ConfigOverride.config("grpcServer.shutdownPeriod", shutdownPeriodInMillis + " ms"));
+        final DropwizardTestSupport<TestConfiguration> testSupport =
+                new DropwizardTestSupport<>(TestApplication.class, resourceFilePath("grpc-test-config.yaml"),
+                    Optional.empty(), ConfigOverride.config("grpcServer.shutdownPeriod", shutdownPeriod.toString()));
 
         ManagedChannel channel = null;
         try {
@@ -216,24 +214,24 @@ public final class GrpcServerTests {
             app.getPersonService().setGetPersonCallLatch(latch);
 
             // send request asynchronously
-            final CompletableFuture<Long> requestDurationInMillisFut = CompletableFuture.supplyAsync(() -> {
+            final CompletableFuture<Duration> requestDurationFut = CompletableFuture.supplyAsync(() -> {
                 final Stopwatch stopwatch = Stopwatch.createStarted();
-                client.getPerson(
-                    GetPersonRequest.newBuilder().setName(String.valueOf(slowRequestDurationInMillis)).build());
-                return stopwatch.elapsed(TimeUnit.MILLISECONDS);
+                client.getPerson(GetPersonRequest.newBuilder()
+                    .setName(String.valueOf(slowRequestDuration.toMilliseconds())).build());
+                return Duration.milliseconds(stopwatch.elapsed(TimeUnit.MILLISECONDS));
             });
 
             // wait until server starts processing the request
             latch.await();
 
             // request shutdown
-            final CompletableFuture<Long> shutdownDurationInMillisFut = CompletableFuture.supplyAsync(() -> {
+            final CompletableFuture<Duration> shutdownDurationFut = CompletableFuture.supplyAsync(() -> {
                 final Stopwatch stopwatch = Stopwatch.createStarted();
                 testSupport.after();
-                return stopwatch.elapsed(TimeUnit.MILLISECONDS);
+                return Duration.milliseconds(stopwatch.elapsed(TimeUnit.MILLISECONDS));
             });
 
-            assertions.accept(requestDurationInMillisFut, shutdownDurationInMillisFut);
+            assertions.accept(requestDurationFut, shutdownDurationFut);
 
         } finally {
             shutdownChannel(channel);

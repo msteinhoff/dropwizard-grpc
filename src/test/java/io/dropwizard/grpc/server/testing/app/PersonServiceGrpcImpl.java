@@ -1,19 +1,19 @@
-package io.dropwizard.grpc.server;
+package io.dropwizard.grpc.server.testing.app;
 
 import java.util.concurrent.CountDownLatch;
 
 import com.google.common.collect.ImmutableList;
 
-import io.github.msteinhoff.dropwizard.grpc.test.PersonServiceApi.ExceptionalRequest;
-import io.github.msteinhoff.dropwizard.grpc.test.PersonServiceApi.ExceptionalResponse;
-import io.github.msteinhoff.dropwizard.grpc.test.PersonServiceApi.GetPersonListRequest;
-import io.github.msteinhoff.dropwizard.grpc.test.PersonServiceApi.GetPersonListResponse;
-import io.github.msteinhoff.dropwizard.grpc.test.PersonServiceApi.GetPersonRequest;
-import io.github.msteinhoff.dropwizard.grpc.test.PersonServiceApi.GetPersonResponse;
-import io.github.msteinhoff.dropwizard.grpc.test.PersonServiceApi.GetPersonWithIndexRequest;
-import io.github.msteinhoff.dropwizard.grpc.test.PersonServiceApi.GetPersonWithIndexResponse;
-import io.github.msteinhoff.dropwizard.grpc.test.PersonServiceApi.Person;
-import io.github.msteinhoff.dropwizard.grpc.test.PersonServiceGrpc.PersonServiceImplBase;
+import io.dropwizard.grpc.testing.PersonServiceApi.ExceptionalRequest;
+import io.dropwizard.grpc.testing.PersonServiceApi.ExceptionalResponse;
+import io.dropwizard.grpc.testing.PersonServiceApi.GetPersonListRequest;
+import io.dropwizard.grpc.testing.PersonServiceApi.GetPersonListResponse;
+import io.dropwizard.grpc.testing.PersonServiceApi.GetPersonRequest;
+import io.dropwizard.grpc.testing.PersonServiceApi.GetPersonResponse;
+import io.dropwizard.grpc.testing.PersonServiceApi.GetPersonWithIndexRequest;
+import io.dropwizard.grpc.testing.PersonServiceApi.GetPersonWithIndexResponse;
+import io.dropwizard.grpc.testing.PersonServiceApi.Person;
+import io.dropwizard.grpc.testing.PersonServiceGrpc.PersonServiceImplBase;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
@@ -30,15 +30,9 @@ import io.grpc.stub.StreamObserver;
  * concurrent shutdown.
  *
  * @see src/test/proto/person_service.proto
- *
- * @author gfecher
  */
 public class PersonServiceGrpcImpl extends PersonServiceImplBase {
-    public static final String TEST_PERSON_NAME = "blah";
-
-    public static final String TEST_PERSON_EMAIL = "blah@example.com";
-
-    private final Person person = Person.newBuilder().setName(TEST_PERSON_NAME).setEmail(TEST_PERSON_EMAIL).build();
+    private final static Person TEST_PERSON = Person.newBuilder().setName("blah").setEmail("blah@example.com").build();
 
     private CountDownLatch getPersonCallLatch;
 
@@ -52,7 +46,13 @@ public class PersonServiceGrpcImpl extends PersonServiceImplBase {
     }
 
     /**
-     * If GetPersonRequest.name is a number, the server will wait for this many milliseconds before returning.
+     * Behaviour:
+     * <li>the returned <code>Person</code> will have the name set to GetPersonRequest.name and email set to
+     * GetPersonRequest.name + "@example.com"
+     * <li>if GetPersonRequest.name If GetPersonRequest.name is a number, the server will wait for this many
+     * milliseconds before returning.
+     * <li>if the {@link #getPersonCallLatch} is set, it is counted down
+     *
      */
     @Override
     public void getPerson(final GetPersonRequest request, final StreamObserver<GetPersonResponse> responseObserver) {
@@ -62,14 +62,16 @@ public class PersonServiceGrpcImpl extends PersonServiceImplBase {
 
         waitIfNeeded(request);
 
-        responseObserver.onNext(GetPersonResponse.newBuilder().setPerson(person).build());
+        final Person personResult =
+                Person.newBuilder().setName(request.getName()).setEmail(request.getName() + "@example.com").build();
+        responseObserver.onNext(GetPersonResponse.newBuilder().setPerson(personResult).build());
         responseObserver.onCompleted();
     }
 
     @Override
     public void getPersonList(final GetPersonListRequest request,
             final StreamObserver<GetPersonListResponse> responseObserver) {
-        responseObserver.onNext(GetPersonListResponse.newBuilder().addPerson(person).build());
+        responseObserver.onNext(GetPersonListResponse.newBuilder().addPerson(TEST_PERSON).build());
         responseObserver.onCompleted();
     }
 
@@ -77,7 +79,7 @@ public class PersonServiceGrpcImpl extends PersonServiceImplBase {
     public void getPersonWithIndex(final GetPersonWithIndexRequest request,
             final StreamObserver<GetPersonWithIndexResponse> responseObserver) {
         responseObserver.onNext(GetPersonWithIndexResponse.newBuilder()
-            .setPerson(ImmutableList.of(person).get(request.getIndex())).build());
+            .setPerson(ImmutableList.of(TEST_PERSON).get(request.getIndex())).build());
         responseObserver.onCompleted();
     }
 

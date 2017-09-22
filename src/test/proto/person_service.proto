@@ -1,8 +1,8 @@
 syntax = "proto3";
-package io.github.msteinhoff.dropwizard.grpc.test;
+package io.dropwizard.grpc.testing;
 
 option java_multiple_files = false;
-option java_package = "io.github.msteinhoff.dropwizard.grpc.test";
+option java_package = "io.dropwizard.grpc.testing";
 option java_outer_classname = "PersonServiceApi";
 
 // Provides API to query persons (roughly based on io.dropwizard.testing.app.PersonResource)

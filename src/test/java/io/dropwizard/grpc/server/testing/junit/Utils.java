@@ -1,6 +1,7 @@
-package io.dropwizard.grpc.server.testing;
+package io.dropwizard.grpc.server.testing.junit;
 
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
@@ -10,10 +11,9 @@ import javax.net.ssl.SSLException;
 
 import io.dropwizard.cli.CheckCommand;
 import io.dropwizard.cli.Command;
-import io.dropwizard.grpc.server.testing.junit.TestApplication;
-import io.dropwizard.grpc.server.testing.junit.TestConfiguration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.testing.DropwizardTestSupport;
+import io.dropwizard.util.Duration;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.netty.GrpcSslContexts;
@@ -23,8 +23,6 @@ import net.sourceforge.argparse4j.inf.Namespace;
 
 /**
  * Utility class with convenience methods for testing.
- *
- * @author gfecher
  */
 public final class Utils {
     /**
@@ -91,8 +89,8 @@ public final class Utils {
      * @throws Exception if the command failed
      */
     @SuppressWarnings("unchecked")
-    public static TestApplication runTestWithConfig(final String yamlConfig) throws Exception {
-        return runTestWithConfig(yamlConfig, CheckCommand::new);
+    public static TestApplication runCheckCommandUsingConfig(final String yamlConfig) throws Exception {
+        return runDropwizardCommandUsingConfig(yamlConfig, CheckCommand::new);
     }
 
     /**
@@ -102,7 +100,7 @@ public final class Utils {
      * @return the TestApplication if successful
      * @throws Exception if the command failed
      */
-    public static TestApplication runTestWithConfig(final String yamlConfig,
+    public static TestApplication runDropwizardCommandUsingConfig(final String yamlConfig,
             final Function<TestApplication, Command> commandInstantiator) throws Exception {
         final TestApplication application = new TestApplication();
         final Bootstrap<TestConfiguration> bootstrap = new Bootstrap<>(application);
@@ -110,6 +108,32 @@ public final class Utils {
         final Command command = commandInstantiator.apply(application);
         command.run(bootstrap, new Namespace(Collections.singletonMap("file", yamlConfig)));
         return application;
+    }
+
+    /**
+     * Adds the given durations together. The implementation is not performant, use only for testing.
+     *
+     * @return a Duration that is the sum of <code>a</code> and <code>b</code>. If the unit of the 2 Durations is the
+     *         same, it will be used, otherwise they're converted to nanoseconds before summing
+     */
+    public static Duration add(final Duration a, final Duration b) {
+        return a.getUnit() == b.getUnit()
+                ? Duration.parse(
+                    String.valueOf(a.getQuantity() + b.getQuantity()) + " " + a.getUnit().toString().toLowerCase())
+                : Duration.nanoseconds(a.toNanoseconds() + b.toNanoseconds());
+    }
+
+    /**
+     * Comparison is done in milliseconds.
+     *
+     * @param expected expected value
+     * @param actual the value to check against <code>expected</code>
+     * @param tolerance delta the maximum tolerance between <code>expected</code> and <code>actual</code> for which both
+     *            durations are still considered equal.
+     */
+    public static void assertEqualsWithTolerance(final Duration expected, final Duration actual,
+            final Duration tolerance) {
+        assertEquals((double) expected.toMilliseconds(), actual.toMilliseconds(), tolerance.toMilliseconds());
     }
 
     private Utils() {

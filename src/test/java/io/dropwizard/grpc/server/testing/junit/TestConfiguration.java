@@ -9,8 +9,6 @@ import io.dropwizard.grpc.server.GrpcServerFactory;
 
 /**
  * Configuration for {@link TestApplication}.
- *
- * @author gfecher
  */
 public class TestConfiguration extends Configuration {
     @Valid

@@ -3,14 +3,12 @@ package io.dropwizard.grpc.server.testing.junit;
 import com.google.common.annotations.VisibleForTesting;
 
 import io.dropwizard.Application;
-import io.dropwizard.grpc.server.PersonServiceGrpcImpl;
+import io.dropwizard.grpc.server.testing.app.PersonServiceGrpcImpl;
 import io.dropwizard.setup.Environment;
 import io.grpc.Server;
 
 /**
  * Application used in unit tests.
- *
- * @author gfecher
  */
 public class TestApplication extends Application<TestConfiguration> {
     // these are needed only for testing purposes
