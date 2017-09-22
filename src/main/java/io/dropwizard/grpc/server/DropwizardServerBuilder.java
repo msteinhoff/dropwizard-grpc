@@ -15,7 +15,10 @@ import io.grpc.DecompressorRegistry;
 import io.grpc.HandlerRegistry;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.grpc.ServerInterceptor;
 import io.grpc.ServerServiceDefinition;
+import io.grpc.ServerStreamTracer.Factory;
+import io.grpc.ServerTransportFilter;
 
 /**
  * {@link ServerBuilder} decorator which adds the resulting {@link Server} instance to the environment' lifecycle.
@@ -57,6 +60,24 @@ public final class DropwizardServerBuilder extends ServerBuilder<DropwizardServe
         // TODO configure io.grpc.ServerInterceptor to collect dropwizard metrics
         // TODO configure io.grpc.ServerInterceptor to send rpc call and exception events to logback
         origin.addService(bindableService);
+        return this;
+    }
+
+    @Override
+    public DropwizardServerBuilder intercept(final ServerInterceptor interceptor) {
+        origin.intercept(interceptor);
+        return this;
+    }
+
+    @Override
+    public DropwizardServerBuilder addTransportFilter(final ServerTransportFilter filter) {
+        origin.addTransportFilter(filter);
+        return this;
+    }
+
+    @Override
+    public DropwizardServerBuilder addStreamTracerFactory(final Factory factory) {
+        origin.addStreamTracerFactory(factory);
         return this;
     }
 
