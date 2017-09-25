@@ -1,0 +1,12 @@
+grpcServer:
+  port: 0
+  shutdownPeriod: 1 seconds
+
+# This is only needed so that the tests don't fail due to bind errors
+server:
+  applicationConnectors:
+    - type: http
+      port: 0
+  adminConnectors:
+    - type: http
+      port: 0

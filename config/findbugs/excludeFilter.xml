@@ -9,4 +9,8 @@
         <Class name="io.dropwizard.grpc.server.GrpcServerFactory"/>
         <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/>
     </Match>
+    <Match>
+        <Package name="io.dropwizard.grpc.testing.*"/>
+        <Bug pattern="UCF_USELESS_CONTROL_FLOW"/>
+    </Match>
 </FindBugsFilter>
