@@ -34,7 +34,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 group = 'io.github.msteinhoff'
 description = 'A set of classes to use a gRPC server in a Dropwizard service.'
-version = isRelease ?  "$versionDropwizardVersion-$versionProjectVersion" : "$versionDropwizardVersion-$versionProjectVersion-SNAPSHOT"
+version = "$versionDropwizardVersion-$versionProjectVersion" + (!isRelease ? "-SNAPSHOT" : "")
 
 ext {
     ghRepo = 'msteinhoff/dropwizard-grpc'
