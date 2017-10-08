@@ -60,6 +60,10 @@ ext {
     protoVersion = '3.3.1'
     junitVersion = '4.12'
     mockitoVersion = '1.10.19'
+    bintrayUser = System.env.BINTRAY_USER
+    bintrayApiKey = System.env.BINTRAY_API_KEY
+    ossrhUser = System.env.OSSRH_USER
+    ossrhPassword = System.env.OSSRH_PASSWORD
 }
 
 repositories {
@@ -245,12 +249,12 @@ publishing {
 }
 
 artifactory {
-    contextUrl = artifactoryContextUrl
+    contextUrl = 'https://oss.jfrog.org/'
     publish {
         repository {
             repoKey = 'oss-snapshot-local'
-            username = artifactoryUser
-            password = artifactoryPassword
+            username = bintrayUser
+            password = bintrayApiKey
             maven = true
         }
         defaults {
@@ -260,8 +264,8 @@ artifactory {
     resolve {
         repository {
             repoKey = 'libs-release'
-            username = artifactoryUser
-            password = artifactoryPassword
+            username = bintrayUser
+            password = bintrayApiKey
             maven = true
         }
     }
@@ -272,7 +276,7 @@ publish.dependsOn(artifactoryPublish)
 
 bintray {
     user = bintrayUser
-    key = bintrayKey
+    key = bintrayApiKey
     publications = ['mavenJava']
     dryRun = project.hasProperty('dryRun') && project.dryRun.toBoolean()
     publish = true
