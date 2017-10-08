@@ -294,7 +294,7 @@ bintray {
                 sign = true
             }
             mavenCentralSync {
-                sync = false
+                sync = true
                 user = ossrhUser
                 password = ossrhPassword
                 close = '1'
