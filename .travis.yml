@@ -5,8 +5,6 @@ branches:
     - /^release\/(.*)/
 sudo: false
 language: java
-before_install:
-  - ./travis/configure-gradle.sh
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
