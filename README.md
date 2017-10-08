@@ -6,15 +6,15 @@
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.msteinhoff/dropwizard-grpc.svg)](http://search.maven.org/#artifactdetails%7Cio.github.msteinhoff%7Cdropwizard-grpc%7C1.1.3-1%7C)
 [![Javadocs](http://www.javadoc.io/badge/io.github.msteinhoff/dropwizard-grpc.svg)](http://www.javadoc.io/doc/io.github.msteinhoff/dropwizard-grpc/1.1.3-1)
 
-A set of classes to use [gRPC] [1] server in a [Dropwizard] [2] application.  
+A set of classes to use [gRPC](1) server in a [Dropwizard](2) application.  
 
-The package provides [lifecycle-management] [3] and configuration factory
+The package provides [lifecycle-management](3) and configuration factory
 classes with the most common options for gRPC `Server` and `ManagedChannel`
 classes.  
 
 # Server
 
-To embed a grpc server, add a `GrpcServerFactory` to your [Configuration] [4]
+To embed a grpc server, add a `GrpcServerFactory` to your [Configuration](4)
 class.  This enables configuration of the grpc server port and transport
 security files.  
 
@@ -85,7 +85,7 @@ class ExampleServiceApplication extends Application<ExampleServiceConfiguration>
 # Client
 
 To embed a grpc channel for a server, add a `GrpcChannelFactory` to your
-[Configuration] [4] class.  This enables configuration of the grpc channel
+[Configuration](4) class.  This enables configuration of the grpc channel
 hostname and port.
 
 **ExampleServiceConfiguration.java**:  
@@ -176,7 +176,7 @@ Or if you are using gradle:
 
 # Support
 
-Please file bug reports and feature requests in [GitHub issues] [5].  
+Please file bug reports and feature requests in [GitHub issues](5).  
 
 # License
 
@@ -187,8 +187,8 @@ This library is licensed under the Apache License, Version 2.0.
 See http://www.apache.org/licenses/LICENSE-2.0.html or the LICENSE file in this
 repository for the full license text.  
 
-[1]: http://www.grpc.io/
-[2]: http://dropwizard.io/1.0.0/docs
-[3]: http://dropwizard.io/1.0.0/docs/manual/core.html#managed-objects
-[4]: http://dropwizard.io/1.0.0/docs/manual/core.html#configuration
-[5]: https://github.com/msteinhoff/dropwizard-grpc/issues
+[1]: https://www.grpc.io/
+[2]: http://dropwizard.io/1.1.3/docs/
+[3]: http://dropwizard.io/1.1.3/docs/manual/core.html#managed-objects
+[4]: http://dropwizard.io/1.1.3/docs/manual/core.html#configuration
+[5]: https://github.com/msteinhoff/dropwizard-grpc/issues/
