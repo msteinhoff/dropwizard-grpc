@@ -180,7 +180,7 @@ Please file bug reports and feature requests in [GitHub issues](5).
 
 # License
 
-Copyright (c) 2016-2017 Mario Steinhoff
+Copyright (c) 2016-2018 Mario Steinhoff
 
 This library is licensed under the Apache License, Version 2.0.
 
