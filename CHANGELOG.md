@@ -13,6 +13,8 @@ Added:
 
 Changed:
 
+- Upgraded dropwizard dependency to 1.2.3.
+
 - (...)
 
 Deprecated:
