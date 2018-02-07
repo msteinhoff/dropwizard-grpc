@@ -13,10 +13,6 @@ Added:
 
 Changed:
 
-- Upgraded dropwizard dependency to 1.2.3.
-
-- Upgraded gRPC dependency to 1.9.0.
-
 - (...)
 
 Deprecated:
@@ -34,6 +30,14 @@ Fixed:
 Security:
 
 - (...)
+
+## [1.2.3-1] - 2018-02-07
+
+Changed:
+
+- Upgraded dropwizard dependency to 1.2.3.
+
+- Upgraded gRPC dependency to 1.9.0.
 
 ## [1.1.3-1] - 2017-11-08
 
