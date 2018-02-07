@@ -47,13 +47,16 @@ ext {
     buildTime = buildDateTime.split('T')[1]
     gitRevision = "git rev-parse HEAD".execute().text.trim()
     gradleVersion = '3.2.1'
-    // jar versions
+    // compile dependencies
     dropwizardVersion = versionDropwizardVersion
-    grpcVersion = '1.6.1'
-    protocVersion = '3.3.0'
-    protoVersion = '3.3.1'
+    grpcVersion = '1.9.0'
+    // test dependencies
     junitVersion = '4.12'
     mockitoVersion = '1.10.19'
+    protocVersion = '3.5.1-1'
+    protoVersion = '3.3.1'
+    // make sure this is compatible with gRPC, see SECURITY.md in grpc-java repo
+    tcnativeBoringSslVersion = '2.0.7.Final'
     bintrayUser = System.env.BINTRAY_USER
     bintrayApiKey = System.env.BINTRAY_API_KEY
     ossrhUser = System.env.OSSRH_USER
@@ -81,7 +84,7 @@ dependencies {
     testCompile "io.grpc:grpc-protobuf:$grpcVersion"
     testCompile "com.google.protobuf:protobuf-java:$protoVersion"
     testCompile "io.grpc:grpc-testing:$grpcVersion"
-    testCompile 'io.netty:netty-tcnative-boringssl-static:2.0.5.Final'
+    testCompile "io.netty:netty-tcnative-boringssl-static:$tcnativeBoringSslVersion"
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-all:$mockitoVersion"
 }

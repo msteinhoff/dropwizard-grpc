@@ -15,6 +15,8 @@ Changed:
 
 - Upgraded dropwizard dependency to 1.2.3.
 
+- Upgraded gRPC dependency to 1.9.0.
+
 - (...)
 
 Deprecated:
