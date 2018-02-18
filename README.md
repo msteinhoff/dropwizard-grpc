@@ -53,7 +53,7 @@ server:
 logging:
     [...]
 grpcServer:
-    port: 80000
+    port: 8000
     shutdownDuration: 10 seconds
 ```
 
