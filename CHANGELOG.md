@@ -33,6 +33,12 @@ Security:
 
 - (...)
 
+## [1.2.3-2] - 2018-06-25
+
+Changed:
+
+- Upgraded gRPC dependency to 1.13.1.
+
 ## [1.2.3-1] - 2018-02-07
 
 Changed:
