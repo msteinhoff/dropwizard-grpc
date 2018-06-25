@@ -13,8 +13,6 @@ Added:
 
 Changed:
 
-- Upgraded gRPC dependency to 1.13.1.
-
 - (...)
 
 Deprecated:
