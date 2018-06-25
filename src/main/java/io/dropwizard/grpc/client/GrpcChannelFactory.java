@@ -89,7 +89,7 @@ public class GrpcChannelFactory {
      * communication enabled. The builder can be customized further, e.g. to add channel-wide interceptors.
      */
     public ManagedChannelBuilder builder() {
-        return ManagedChannelBuilder.forAddress(getHostname(), getPort()).usePlaintext(true);
+        return ManagedChannelBuilder.forAddress(getHostname(), getPort()).usePlaintext();
     }
 
     /**
