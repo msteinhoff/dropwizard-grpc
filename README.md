@@ -2,9 +2,9 @@
 
 [![Build Status](https://travis-ci.org/msteinhoff/dropwizard-grpc.svg?branch=master)](https://travis-ci.org/msteinhoff/dropwizard-grpc)
 [![Coverage Status](https://img.shields.io/coveralls/msteinhoff/dropwizard-grpc.svg)](https://coveralls.io/r/msteinhoff/dropwizard-grpc)
-[![Bintray](https://img.shields.io/bintray/v/msteinhoff/maven/dropwizard-grpc.svg)](https://bintray.com/msteinhoff/maven/dropwizard-grpc/1.1.3-1)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.msteinhoff/dropwizard-grpc.svg)](http://search.maven.org/#artifactdetails%7Cio.github.msteinhoff%7Cdropwizard-grpc%7C1.1.3-1%7C)
-[![Javadocs](http://www.javadoc.io/badge/io.github.msteinhoff/dropwizard-grpc.svg)](http://www.javadoc.io/doc/io.github.msteinhoff/dropwizard-grpc/1.1.3-1)
+[![Bintray](https://img.shields.io/bintray/v/msteinhoff/maven/dropwizard-grpc.svg)](https://bintray.com/msteinhoff/maven/dropwizard-grpc/1.2.3-1)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.msteinhoff/dropwizard-grpc.svg)](http://search.maven.org/#artifactdetails%7Cio.github.msteinhoff%7Cdropwizard-grpc%7C1.2.3-1%7C)
+[![Javadocs](http://www.javadoc.io/badge/io.github.msteinhoff/dropwizard-grpc.svg)](http://www.javadoc.io/doc/io.github.msteinhoff/dropwizard-grpc/1.2.3-1)
 
 A set of classes to use [gRPC](1) server in a [Dropwizard](2) application.  
 
@@ -161,7 +161,7 @@ project simply add the following dependency to your pom.xml:
     <dependency>
       <groupId>io.github.msteinhoff</groupId>
       <artifactId>dropwizard-grpc</artifactId>
-      <version>1.1.3-1</version>
+      <version>1.2.3-1</version>
     </dependency>
 
 Or if you are using gradle:
@@ -171,7 +171,7 @@ Or if you are using gradle:
     }
 
     dependencies {
-        compile 'io.github.msteinhoff:dropwizard-grpc:1.1.3-1'
+        compile 'io.github.msteinhoff:dropwizard-grpc:1.2.3-1'
     }
 
 # Support
