@@ -51,7 +51,7 @@ public class DropwizardPersonServiceGrpcImplTest {
         final TestApplication application = DROPWIZARD.getApplication();
         final ManagedChannelBuilder<?> localhost =
                 ManagedChannelBuilder.forTarget("localhost:" + application.getServer().getPort());
-        channel = localhost.usePlaintext(true).build();
+        channel = localhost.usePlaintext().build();
         client = PersonServiceGrpc.newBlockingStub(channel);
     }
 

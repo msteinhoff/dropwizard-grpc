@@ -34,7 +34,7 @@ public final class Utils {
      */
     public static ManagedChannel createPlaintextChannel(final DropwizardTestSupport<TestConfiguration> testSupport) {
         final TestApplication application = testSupport.getApplication();
-        return ManagedChannelBuilder.forAddress("localhost", application.getServer().getPort()).usePlaintext(true)
+        return ManagedChannelBuilder.forAddress("localhost", application.getServer().getPort()).usePlaintext()
             .build();
     }
 
