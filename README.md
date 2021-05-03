@@ -1,5 +1,7 @@
 # Dropwizard gRPC
 
+**⚠️ THIS PROJECT IS NOT MAINTAINED ANYMORE. ⚠️**
+
 [![Build Status](https://travis-ci.org/msteinhoff/dropwizard-grpc.svg?branch=master)](https://travis-ci.org/msteinhoff/dropwizard-grpc)
 [![Coverage Status](https://img.shields.io/coveralls/msteinhoff/dropwizard-grpc.svg)](https://coveralls.io/r/msteinhoff/dropwizard-grpc)
 [![Bintray](https://img.shields.io/bintray/v/msteinhoff/maven/dropwizard-grpc.svg)](https://bintray.com/msteinhoff/maven/dropwizard-grpc/1.2.3-2)
